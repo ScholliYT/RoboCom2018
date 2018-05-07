@@ -7,7 +7,10 @@ https://www.w-hs.de/robocom-2018/
 
 ## Raspberry Pi
 ### Dependencies for python:
-numpy, imutils, opencv (cv2)
+ numpy, imutils, opencv (cv2), pathlib, opencv-contib-python
+
+pip (except opencv):
+```$ pip install numpy imutils pathlib```
 
 ### Usage:
 Start main program:
