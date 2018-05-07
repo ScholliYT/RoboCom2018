@@ -1,3 +1,3 @@
 # RoboCom2018
-- RPi
- - Files used by the RaspberryPi
+https://www.w-hs.de/robocom-2018/
+
