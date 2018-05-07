@@ -11,13 +11,13 @@ import cv2
 import time
 import json
 import os.path
-
+from pathlib import Path
 
 
 def callback(value):
     pass
 
-def setup_trackbars(range_filter):
+def setup_trackbarsDefault(range_filter):
     cv2.namedWindow("Trackbars", 0)
     for i in ["MIN", "MAX"]:
         v = 0 if i == "MIN" else 255
@@ -25,7 +25,7 @@ def setup_trackbars(range_filter):
         for j in range_filter:
             cv2.createTrackbar("%s_%s" % (j, i), "Trackbars", v, 255, callback) 
 
-def setup_trackbars(range_filter, data):
+def setup_trackbars(range_filter):
     cv2.namedWindow("Trackbars", 0)
     for i in ["MIN", "MAX"]:
         for j in range_filter:
@@ -41,12 +41,11 @@ def get_trackbar_values(range_filter):
 
     return values
 
-def save_trackbar_values(range_filter, data):
-
+def save_trackbar_values(range_filter):
     for i in ["MIN", "MAX"]:
         for j in range_filter:
             data["%s_%s" % (j, i)] = cv2.getTrackbarPos("%s_%s" % (j, i), "Trackbars")
-    with open(path, 'w') as outfile:
+    with open(config, 'w') as outfile:
             json.dump(data, outfile)
             
 # construct the argument parse and parse the arguments
@@ -75,11 +74,16 @@ if not args.get("video", False):
 else:
     camera = cv2.VideoCapture(args["video"])
 
-path = os.path.join(os.path.dirname(__file__), "config.json")
-with open(path) as json_data_file:
-    data = json.load(json_data_file)
-print(data)
-setup_trackbars("HSV", data)
+config = os.path.join(os.path.dirname(__file__), "config.json")
+data = {}
+if(os.path.isfile(config)):
+
+    with open(config) as json_data_file:
+        data = json.load(json_data_file)
+    print(data)
+    setup_trackbars("HSV")
+else:
+    setup_trackbarsDefault("HSV")
 # keep looping
 while True:
     startTime = time.time()
@@ -179,7 +183,7 @@ while True:
 
     # if the 'q' key is pressed, stop the loop
     if key == ord("q"):
-        save_trackbar_values("HSV", data)
+        save_trackbar_values("HSV")
         break
 
 # cleanup the camera and close any open windows
