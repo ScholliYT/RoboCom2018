@@ -3,7 +3,9 @@ https://www.w-hs.de/robocom-2018/
 
 | Path          | Usage         | 
 | ------------- |:-------------:| 
+| /DataDebugger | Tool to configure values on the NXT from a remote client on a computer | 
 | /RPi          | Files that go on the Raspberry Pi | 
+| /Robot_leJos  | Files that go on NXTs | 
 
 ## Raspberry Pi
 ### Dependencies for python:
