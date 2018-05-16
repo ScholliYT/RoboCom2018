@@ -27,13 +27,12 @@ public class PCCommunicationManager implements Closeable{
 	
 	private ArrayList<NxtDataField> dataFields;
 	
-	public PCCommunicationManager(InputStream in, OutputStream out){
+	public PCCommunicationManager(InputStream in, OutputStream out, ArrayList<NxtDataField> dataFields){
 		this.available = true;
 		this.datafieldUpdate = false;
 		this.dataFields = new ArrayList<>();
 		
-		dataFields.add(new NxtDataField("name123", DataFieldType.STRING, "Ich bin ein String"));
-		dataFields.add(new NxtDataField("name1234", DataFieldType.DOUBLE, -0.67D + ""));
+		this.dataFields = dataFields;
 		
 		this.out = new NxtToPcOutputStreamManager(this, out);
 		this.in = new PcToNxtInputStreamManager(this, in);
