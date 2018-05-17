@@ -37,7 +37,6 @@ public class PcToNxtInputStreamManager extends Thread{
 							for(NxtDataField df: parent.getDatafields()){
 								upload += df.getName() + ":" + df.getType().toString() + ":" + df.getValue().toString() + ";";
 							}
-							System.out.println("Up:" + upload);
 							parent.writeString(upload);
 							break reader;
 						}else if(buffer.startsWith("df!")){

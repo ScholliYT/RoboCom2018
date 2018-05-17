@@ -5,6 +5,10 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JMenuBar;
 import javax.swing.border.TitledBorder;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
@@ -23,7 +27,7 @@ import javax.swing.JSeparator;
 import javax.swing.UIManager;
 import java.awt.Color;
 
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -61,7 +65,7 @@ public class NXTCommunicationFrame extends JFrame{
 	private JButton btnFireUpdate;
 	private JButton btnSave;
 	private JButton btnClear;
-	private JTextArea textAreaNxtInput;
+	private JTextPane textAreaNxtInput;
 	private MyFileTableModel model;
 	private PopupMenu popupMenu;
 	private NXTCommunication com;
@@ -244,11 +248,11 @@ public class NXTCommunicationFrame extends JFrame{
 		scrollPane_1.setBounds(10, 21, 367, 419);
 		panel.add(scrollPane_1);
 		
-		textAreaNxtInput = new JTextArea();
+		textAreaNxtInput = new JTextPane();
 		textAreaNxtInput.setToolTipText("Vom NXT \u00FCbertragene Debug-Daten");
 		textAreaNxtInput.setEditable(false);
-		textAreaNxtInput.setWrapStyleWord(true);
-		textAreaNxtInput.setLineWrap(true);
+//		textAreaNxtInput.setWrapStyleWord(true);
+//		textAreaNxtInput.setLineWrap(true);
 		scrollPane_1.setViewportView(textAreaNxtInput);
 		
 		btnSave = new JButton("Speichern");
@@ -407,10 +411,19 @@ public class NXTCommunicationFrame extends JFrame{
 				ExceptionReporter.showDialog(this, e);
 			}
 		}
+		addTextToTextPane(out, Color.BLACK, null);
 		if(settings.getNxtDebuggingAutoscrollActive()){
 			textAreaNxtInput.setCaretPosition(textAreaNxtInput.getDocument().getLength());
 		}
-		this.textAreaNxtInput.append(out);
+	}
+	
+	public void displayNxtErrorInput(String input){
+		String[] traces = input.split("|");
+		
+		for(String trace: traces){
+			addTextToTextPane(trace, Color.RED, null);
+		}
+		
 	}
 	
 	public void init(InputStream in, OutputStream out){
@@ -472,6 +485,18 @@ public class NXTCommunicationFrame extends JFrame{
 	
 	public void cancelCurrentTableEdit(){
 		table.editingCanceled(null);
+	}
+	
+	private void addTextToTextPane(String str, Color color, String fontFamily){
+		StyledDocument doc = textAreaNxtInput.getStyledDocument();
+		
+		Style style = textAreaNxtInput.addStyle("Color Style", null);
+		StyleConstants.setForeground(style, color);
+		try{
+			doc.insertString(doc.getLength(), str, style);
+		}catch(BadLocationException e){
+			e.printStackTrace();
+		}
 	}
 	
 }

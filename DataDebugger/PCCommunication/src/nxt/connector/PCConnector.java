@@ -48,7 +48,7 @@ public class PCConnector{
 	 * Doppelt vergebene Datenfeldnamen geprüft, das ist euer Job! Zusätzlicher Tipp: mit Hilfe von <code>exception.getMessage()</code> bekommt ihr einen String,
 	 * der den Fehler näher beschreibt!
 	 */
-	public PCConnector(ConnectionType connectionType, boolean showProgress, boolean audibleFeedback, Object[] datafields)throws IllegalArgumentException{
+	public PCConnector(ConnectionType connectionType, boolean showProgress, boolean audibleFeedback, Object... datafields)throws IllegalArgumentException{
 		this(connectionType, new byte[] {1, 2, 3, 4}, showProgress, audibleFeedback, datafields);
 	}
 	
@@ -76,7 +76,7 @@ public class PCConnector{
 	 * Doppelt vergebene Datenfeldnamen geprüft, das ist euer Job! Zusätzlicher Tipp: mit Hilfe von <code>exception.getMessage()</code> bekommt ihr einen String,
 	 * der den Fehler näher beschreibt!
 	 */
-	public PCConnector(ConnectionType connectionType, byte[] bluetoothPin, boolean showProgress, boolean audibleFeedback, Object[] datafields) throws IllegalArgumentException{
+	public PCConnector(ConnectionType connectionType, byte[] bluetoothPin, boolean showProgress, boolean audibleFeedback, Object... datafields) throws IllegalArgumentException{
 		this.connectionType = connectionType;
 		this.showProgress = showProgress;
 		this.audibleFeedback = audibleFeedback;
@@ -150,9 +150,9 @@ public class PCConnector{
 			case BLUETOOTH:
 				if(!Bluetooth.getPower()){
 					Bluetooth.setPower(true);
-					Bluetooth.setVisibility((byte) 1);
-					while(!Bluetooth.getPower() && Bluetooth.getVisibility() != 1);
-				}else if(Bluetooth.getVisibility() != 1){
+					while(!Bluetooth.getPower());
+				}
+				if(Bluetooth.getVisibility() != 1){
 					Bluetooth.setVisibility((byte) 1);
 					while(Bluetooth.getVisibility() != 1);
 				}
