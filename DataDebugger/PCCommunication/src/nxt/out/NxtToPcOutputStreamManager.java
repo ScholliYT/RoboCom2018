@@ -48,7 +48,7 @@ public class NxtToPcOutputStreamManager extends Thread{
 			}catch(Exception e){
 				parent.close();
 			}
-			Delay.msDelay(100);
+			Delay.msDelay(125);
 		}
 		
 		try{
