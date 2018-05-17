@@ -88,6 +88,8 @@ public class NxtToPcInputStreamManager extends Thread{
 							frame.getTable().updateUI();
 							
 							LoadNxtSettingsDialog.hideDialog();
+						}else if(buffer.startsWith("ex!")){
+							frame.displayNxtErrorInput(buffer.substring(3));
 						}else if(buffer.startsWith("shutdown")){
 							com.close(true);
 							input.close();

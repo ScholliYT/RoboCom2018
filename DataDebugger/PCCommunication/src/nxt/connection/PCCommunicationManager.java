@@ -9,6 +9,8 @@ import lejos.util.Delay;
 import nxt.connector.PCConnector;
 import nxt.in.PcToNxtInputStreamManager;
 import nxt.object.DataFieldType;
+import nxt.object.ExceptionToStringOutputStream;
+import nxt.object.ExceptionToStringPrintStream;
 import nxt.out.NxtToPcOutputStreamManager;
 
 /**
@@ -111,6 +113,13 @@ public class PCCommunicationManager implements Closeable{
 	 */
 	public void writeString(String s){
 		out.addStringToQueue(s);
+	}
+	
+	public void writeException(Throwable ex){
+		ExceptionToStringPrintStream ps = new ExceptionToStringPrintStream(new ExceptionToStringOutputStream());
+		ex.printStackTrace(ps);
+//		Delay.msDelay(50);
+		writeString("ex!" + ps.getExcpetionAsString());
 	}
 	
 	/**

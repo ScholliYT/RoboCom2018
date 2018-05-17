@@ -51,7 +51,6 @@ public class SettingsManager{
 	private void loadCurrentSettings(){
 		try{
 			File settings = new File(System.getProperty("user.home") + "\\nxt\\settings.dat");
-			System.out.println(settings.getPath());
 			if(!settings.exists()){
 				settings.getParentFile().mkdirs();
 				settings.createNewFile();
