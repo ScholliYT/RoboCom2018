@@ -412,18 +412,17 @@ public class NXTCommunicationFrame extends JFrame{
 			}
 		}
 		addTextToTextPane(out, Color.BLACK, null);
-		if(settings.getNxtDebuggingAutoscrollActive()){
-			textAreaNxtInput.setCaretPosition(textAreaNxtInput.getDocument().getLength());
-		}
 	}
 	
 	public void displayNxtErrorInput(String input){
-		String[] traces = input.split("|");
+		String[] traces = input.substring(0, input.length()-1).split(";");
+		
+		addTextToTextPane("Auf dem NXT ist ein Fehler aufgetreten:", Color.RED, null);
 		
 		for(String trace: traces){
-			addTextToTextPane(trace, Color.RED, null);
+			addTextToTextPane(trace + "\n", Color.RED, null);
 		}
-		
+		addTextToTextPane("---------------------------------------", Color.RED, null);
 	}
 	
 	public void init(InputStream in, OutputStream out){
@@ -493,9 +492,12 @@ public class NXTCommunicationFrame extends JFrame{
 		Style style = textAreaNxtInput.addStyle("Color Style", null);
 		StyleConstants.setForeground(style, color);
 		try{
-			doc.insertString(doc.getLength(), str, style);
+			doc.insertString(doc.getLength(), (textAreaNxtInput.getText().endsWith("\n") || textAreaNxtInput.getText().isEmpty() ? "" : "\n") + str, style);
 		}catch(BadLocationException e){
 			e.printStackTrace();
+		}
+		if(settings.getNxtDebuggingAutoscrollActive()){
+			textAreaNxtInput.setCaretPosition(textAreaNxtInput.getDocument().getLength());
 		}
 	}
 	

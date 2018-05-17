@@ -39,12 +39,13 @@ public class Main{
 			if(Button.LEFT.isDown()){ //Prüfen, ob der Linke Knopp gedrückt ist
 				man.writeString("Message " + ++count); //Eine Nachricht senden
 				while(Button.LEFT.isDown()); //Waren, bis der Knopp wieder losgelassen wird
-				
-//				try{
-//					throw new NullPointerException("aha, sihhi yardim cantasi!");
-//				}catch(NullPointerException npe){
-//					man.writeException(npe);
-//				}
+			}else if(Button.RIGHT.isDown()){
+				try{
+					throw new NullPointerException("Etwas ist (eigentlich nicht) null!");
+				}catch(Exception e){
+					man.writeException(e);
+				}
+				while(Button.RIGHT.isDown());
 			}
 			
 			if(man.hasDatafieldUpdate()){ //Prüfen, ob es ein Datenfeldupdate gibt
