@@ -186,37 +186,49 @@ public class NXTCommunicationFrame extends JFrame{
 		mntmNeueDatenfelderUploaden.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
 		mnComputer.add(mntmNeueDatenfelderUploaden);
 		
+		JMenu mnExceptionparsing = new JMenu("Exceptionparsing");
+		menuBar.add(mnExceptionparsing);
+		
+		JMenuItem mntmExceptionparsingBearbeiten = new JMenuItem("Exceptionparsing bearbeiten...");
+		mntmExceptionparsingBearbeiten.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				ExceptionParsingDialog.getSingletone().setLocationRelativeTo(NXTCommunicationFrame.this);
+				ExceptionParsingDialog.getSingletone().setVisible(true);
+			}
+		});
+		mnExceptionparsing.add(mntmExceptionparsingBearbeiten);
+		
 		JMenu mnVerbindung = new JMenu("Verbindung");
 		menuBar.add(mnVerbindung);
 		
 		JMenuItem mntmNewConnection = new JMenuItem("Neue Verbindung...");
 		mntmNewConnection.setIcon(new ImageIcon(NXTCommunicationFrame.class.getResource("/resources/connect_icon_16px.png")));
-//		mntmNewConnection.setIcon(new ImageIcon(NXTCommunicationFrame.class.getResource("/resources/add_new_icon_16px.png")));
-		mntmNewConnection.setEnabled(false);
-		mntmNewConnection.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				com.close(false);
+		//		mntmNewConnection.setIcon(new ImageIcon(NXTCommunicationFrame.class.getResource("/resources/add_new_icon_16px.png")));
+				mntmNewConnection.setEnabled(false);
+				mntmNewConnection.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						com.close(false);
 //				setVisible(false);
-				NXTCommunicationFrame frame = new NXTCommunicationFrame();
-				frame.setVisible(true);
-				setVisible(false);
-			}
-		});
-		mnVerbindung.add(mntmNewConnection);
-		
-		JSeparator separator_5 = new JSeparator();
-		mnVerbindung.add(separator_5);
-		
-		JMenuItem mntmDisconnect = new JMenuItem("Trennen");
-		mntmDisconnect.setIcon(new ImageIcon(NXTCommunicationFrame.class.getResource("/resources/disconnect_icon_16px.png")));
-		mntmDisconnect.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				try{
-					com.close(true);
-				}catch(Exception ignore){}
-			}
-		});
-		mnVerbindung.add(mntmDisconnect);
+						NXTCommunicationFrame frame = new NXTCommunicationFrame();
+						frame.setVisible(true);
+						setVisible(false);
+					}
+				});
+				mnVerbindung.add(mntmNewConnection);
+				
+				JSeparator separator_5 = new JSeparator();
+				mnVerbindung.add(separator_5);
+				
+				JMenuItem mntmDisconnect = new JMenuItem("Trennen");
+				mntmDisconnect.setIcon(new ImageIcon(NXTCommunicationFrame.class.getResource("/resources/disconnect_icon_16px.png")));
+				mntmDisconnect.addActionListener(new ActionListener(){
+					public void actionPerformed(ActionEvent e){
+						try{
+							com.close(true);
+						}catch(Exception ignore){}
+					}
+				});
+				mnVerbindung.add(mntmDisconnect);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -263,17 +275,19 @@ public class NXTCommunicationFrame extends JFrame{
 				chooser.setDialogTitle("Eine Datei auswählen");
 				chooser.setApproveButtonText("Okay");
 				if(chooser.showDialog(NXTCommunicationFrame.this, null) == JFileChooser.APPROVE_OPTION){
-					File f = chooser.getCurrentDirectory();
-					
-					if(f.canRead() && f.canWrite()){
-						try{
+					File f = chooser.getSelectedFile();
+					try{
+						if(!f.exists()) f.createNewFile();
+						
+						if(f.canRead() && f.canWrite()){
 							FileOutputStream fos = new FileOutputStream(f);
 							fos.write(textAreaNxtInput.getText().getBytes());
 							fos.flush();
 							fos.close();
-						}catch(Exception e1){
-							ExceptionReporter.showDialog(NXTCommunicationFrame.this, e1);
 						}
+						
+					}catch(Exception e1){
+						ExceptionReporter.showDialog(NXTCommunicationFrame.this, e1);
 					}
 				}
 			}
@@ -416,11 +430,16 @@ public class NXTCommunicationFrame extends JFrame{
 	
 	public void displayNxtErrorInput(String input){
 		String[] traces = input.substring(0, input.length()-1).split(";");
-		
 		addTextToTextPane("Auf dem NXT ist ein Fehler aufgetreten:", Color.RED, null);
-		
-		for(String trace: traces){
-			addTextToTextPane(trace + "\n", Color.RED, null);
+		if(settings.getExceptionparsingEnabled()){
+			for(String trace: ExceptionParsingDialog.getSingletone().parseException(traces)){
+				addTextToTextPane(trace + "\n", Color.RED, null);
+			}
+		}else{
+			
+			for(String trace: traces){
+				addTextToTextPane(trace + "\n", Color.RED, null);
+			}
 		}
 		addTextToTextPane("---------------------------------------", Color.RED, null);
 	}
@@ -500,7 +519,6 @@ public class NXTCommunicationFrame extends JFrame{
 			textAreaNxtInput.setCaretPosition(textAreaNxtInput.getDocument().getLength());
 		}
 	}
-	
 }
 
 //Altes Entfernen der Datensätze mit einen Table-Keylistener:
