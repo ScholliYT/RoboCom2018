@@ -41,7 +41,8 @@ public class Main{
 				while(Button.LEFT.isDown()); //Waren, bis der Knopp wieder losgelassen wird
 			}else if(Button.RIGHT.isDown()){
 				try{
-					throw new NullPointerException("Etwas ist (eigentlich nicht) null!");
+//					m2();
+					throw new Exception("Ich bin eine Fehlermeldung!");
 				}catch(Exception e){
 					man.writeException(e);
 				}
@@ -56,4 +57,17 @@ public class Main{
 		}
 		man.close(); //Zum Ende des Programms den PCCommunicationmanager schlieﬂen
 	}
+	
+	static void m1()
+    {
+        int test[] = new int[2];
+        // Force an exception
+        test[0] = test[1] + test[2]; // This is line 6
+    }
+
+    static void m2()
+    {
+        m1();
+    }
+	
 }
