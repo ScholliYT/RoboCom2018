@@ -7,9 +7,11 @@ import java.io.OutputStreamWriter;
 
 public class NxtToPcOutputStream{
 	
+	private OutputStream out;
 	private BufferedWriter bw;
 	
 	protected NxtToPcOutputStream(OutputStream source){
+		this.out = source;
 		this.bw = new BufferedWriter(new OutputStreamWriter(source));
 	}
 	
@@ -23,6 +25,10 @@ public class NxtToPcOutputStream{
 	
 	public void close() throws IOException{
 		bw.close();
+	}
+
+	public OutputStream getOutputStream(){
+		return out;
 	}
 	
 }

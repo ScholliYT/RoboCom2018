@@ -29,6 +29,7 @@ public class Main{
 		}
 		Delay.msDelay(100);
 		int count = 0;
+		man.redirectSystemOutputToConnectedPC();
 		while(!Button.ESCAPE.isDown()){ //Programmhauptschleife
 			
 			if(!man.isAvailable()){ //Prüfen, ob der PCCommunicationmanager geschlossen wurde
@@ -37,11 +38,13 @@ public class Main{
 			}
 			
 			if(Button.LEFT.isDown()){ //Prüfen, ob der Linke Knopp gedrückt ist
-				man.writeString("Message " + ++count); //Eine Nachricht senden
+//				man.writeString("Message " + ++count); //Eine Nachricht senden
+				System.out.println("Message: " + ++count);
 				while(Button.LEFT.isDown()); //Waren, bis der Knopp wieder losgelassen wird
 			}else if(Button.RIGHT.isDown()){
 				try{
-					throw new NullPointerException("Etwas ist (eigentlich nicht) null!");
+//					m2();
+					throw new Exception("Ich bin eine Fehlermeldung!");
 				}catch(Exception e){
 					man.writeException(e);
 				}
@@ -56,4 +59,15 @@ public class Main{
 		}
 		man.close(); //Zum Ende des Programms den PCCommunicationmanager schließen
 	}
+	
+	private static void m1(){
+		int test[] = new int[2];
+		// Force an exception
+		test[0] = test[1] + test[2]; // This is line 6
+	}
+	
+	private static void m2(){
+		m1();
+	}
+	
 }

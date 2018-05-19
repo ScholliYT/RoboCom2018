@@ -55,4 +55,9 @@ public class NxtToPcOutputStreamManager extends Thread{
 			out.close();
 		}catch(Exception e){}
 	}
+	
+	public OutputStream getRawOutputStream(){
+		return out.getOutputStream();
+	}
+	
 }

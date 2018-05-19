@@ -3,8 +3,10 @@ package nxt.connection;
 import java.io.Closeable;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 
+import lejos.nxt.LCDOutputStream;
 import lejos.util.Delay;
 import nxt.connector.PCConnector;
 import nxt.in.PcToNxtInputStreamManager;
@@ -23,17 +25,17 @@ public class PCCommunicationManager implements Closeable{
 	
 	private NxtToPcOutputStreamManager out;
 	private PcToNxtInputStreamManager in;
+	private ExceptionToStringPrintStream ps;
 	private volatile boolean available;
 	private boolean datafieldUpdate;
 	private ArrayList<Object> unreadMessages;
-	
 	private ArrayList<NxtDataField> dataFields;
 	
 	public PCCommunicationManager(InputStream in, OutputStream out, ArrayList<NxtDataField> dataFields){
 		this.available = true;
 		this.datafieldUpdate = false;
 		this.dataFields = new ArrayList<>();
-		
+		this.ps = new ExceptionToStringPrintStream(new ExceptionToStringOutputStream());
 		this.dataFields = dataFields;
 		
 		this.out = new NxtToPcOutputStreamManager(this, out);
@@ -115,11 +117,22 @@ public class PCCommunicationManager implements Closeable{
 		out.addStringToQueue(s);
 	}
 	
+	/**
+	 * Sendet eine Fehlermeldung an den PC
+	 * @param ex Die zu Versendende Exception
+	 */
 	public void writeException(Throwable ex){
-		ExceptionToStringPrintStream ps = new ExceptionToStringPrintStream(new ExceptionToStringOutputStream());
 		ex.printStackTrace(ps);
 //		Delay.msDelay(50);
 		writeString("ex!" + ps.getExcpetionAsString());
+	}
+	
+	/**
+	 * Leitet den Verkehr von System.out.println(String s) auf den PC-Debugger um
+	 */
+	public void redirectSystemOutputToConnectedPC(){
+		PrintStream ps = new PrintStream(out.getRawOutputStream());
+		System.out = ps;
 	}
 	
 	/**
@@ -146,6 +159,7 @@ public class PCCommunicationManager implements Closeable{
 	@Override
 	public void close(){
 		out.addStringToQueue("shutdown");
+		System.out =  new PrintStream(new LCDOutputStream());
 		Delay.msDelay(150);
 		this.available = false;
 		in.close();

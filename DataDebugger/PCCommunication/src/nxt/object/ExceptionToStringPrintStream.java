@@ -17,7 +17,7 @@ public class ExceptionToStringPrintStream extends PrintStream{
 		for(char c: s.toCharArray()){
 			try{
 				if(c == '\n'){
-					out.write((int) '\n');
+					out.write((int) ';');
 				}else{
 					out.write((int) c);
 				}

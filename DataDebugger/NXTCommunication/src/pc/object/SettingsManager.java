@@ -40,6 +40,9 @@ public class SettingsManager{
 	
 	public final String RECENT_NXTS_CACHE_KEY = "cache.recentNxts";
 	
+	public final String RECENT_EXCEPTION_PARSING_DATA = "cache.recentNxtParsingData";
+	public final String EXCEPTIONPARSING_ENABLED = "exceptions.parsingEnabled";
+	
 	private HashMap<String, String> currentSettings;
 	
 	private SettingsManager(){
@@ -70,6 +73,9 @@ public class SettingsManager{
 				currentSettings.put(ARCHIVE_OLD_LOG_FILES_KEY, "true");
 				
 				currentSettings.put(RECENT_NXTS_CACHE_KEY, "");
+				
+				currentSettings.put(EXCEPTIONPARSING_ENABLED, "false");
+				currentSettings.put(RECENT_EXCEPTION_PARSING_DATA, "");
 				
 				oos.writeObject(currentSettings);
 				oos.flush();
@@ -184,6 +190,16 @@ public class SettingsManager{
 	public boolean getArchiveOldLogFiles(){
 		ensureEntryExists(ARCHIVE_OLD_LOG_FILES_KEY, "true");
 		return Boolean.parseBoolean(currentSettings.get(ARCHIVE_OLD_LOG_FILES_KEY));
+	}
+	
+	public boolean getExceptionparsingEnabled(){
+		ensureEntryExists(EXCEPTIONPARSING_ENABLED, "false");
+		return Boolean.parseBoolean(currentSettings.get(EXCEPTIONPARSING_ENABLED));
+	}
+	
+	public String getRecentExceptionParsingData(){
+		ensureEntryExists(RECENT_EXCEPTION_PARSING_DATA, "");
+		return currentSettings.get(RECENT_EXCEPTION_PARSING_DATA);
 	}
 	
 	public NXTInfo[] getRecentNXTInfo(ConnectionType connectionType){
