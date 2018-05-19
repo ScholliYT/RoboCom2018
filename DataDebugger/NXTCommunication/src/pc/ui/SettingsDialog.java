@@ -45,6 +45,8 @@ public class SettingsDialog extends JDialog{
 	private SettingsManager settings;
 	private JCheckBox chckbxArchiveOldLogFiles;
 	private JButton btnOpen;
+	private JCheckBox chckbxExceptionparsingAktivieren;
+	private JButton btnEnterData;
 	
 	public SettingsDialog(){
 		setIconImage(Toolkit.getDefaultToolkit().getImage(SettingsDialog.class.getResource("/resources/settings_icon_16px.png")));
@@ -54,7 +56,7 @@ public class SettingsDialog extends JDialog{
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		setType(Type.POPUP);
 		setResizable(false);
-		setBounds(100, 100, 450, 475);
+		setBounds(100, 100, 450, 504);
 		getContentPane().setLayout(null);
 		
 		btnAdopt = new JButton("\u00DCbernehmen");
@@ -65,7 +67,7 @@ public class SettingsDialog extends JDialog{
 				setVisible(false);
 			}
 		});
-		btnAdopt.setBounds(341, 415, 93, 23);
+		btnAdopt.setBounds(341, 441, 93, 23);
 		btnAdopt.setFocusPainted(false);
 		getContentPane().add(btnAdopt);
 		
@@ -77,7 +79,7 @@ public class SettingsDialog extends JDialog{
 				loadCurrentSettings();
 			}
 		});
-		btnDismiss.setBounds(248, 415, 83, 23);
+		btnDismiss.setBounds(248, 441, 83, 23);
 		btnDismiss.setFocusPainted(false);
 		getContentPane().add(btnDismiss);
 		
@@ -101,8 +103,8 @@ public class SettingsDialog extends JDialog{
 		chckbxSaveNewSettingsDirectly = new JCheckBox("Neue Einstellungen automatisch speichern");
 		chckbxSaveNewSettingsDirectly.setEnabled(false);
 		chckbxSaveNewSettingsDirectly.setToolTipText("Geben Sie hier an, ob die neuen Einstellungen gespeichert, oder nur f\u00FCr diese Session gelten sollen");
-		chckbxSaveNewSettingsDirectly.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		chckbxSaveNewSettingsDirectly.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
 				settings.put(settings.SAVE_AUTOMATICALLY_KEY, chckbxSaveNewSettingsDirectly.isSelected() + "");
 			}
 		});
@@ -198,16 +200,19 @@ public class SettingsDialog extends JDialog{
 				settings.put(settings.AUTOSCROLL_ACTIVE_KEY, "true");
 				settings.put(settings.ARCHIVE_OLD_LOG_FILES_KEY, "true");
 				
+				settings.put(settings.EXCEPTIONPARSING_ENABLED, "false");
+				settings.put(settings.RECENT_EXCEPTION_PARSING_DATA, "");
+				
 				settings.saveCurrentSettings();
 			}
 		});
-		btnResetSettings.setBounds(10, 415, 228, 23);
+		btnResetSettings.setBounds(10, 441, 228, 23);
 		btnResetSettings.setFocusPainted(false);
 		getContentPane().add(btnResetSettings);
 		
 		JPanel panelNxtDebugging = new JPanel();
 		panelNxtDebugging.setBorder(new TitledBorder(null, "NXT-Debugging", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelNxtDebugging.setBounds(10, 227, 424, 177);
+		panelNxtDebugging.setBounds(10, 227, 424, 203);
 		getContentPane().add(panelNxtDebugging);
 		panelNxtDebugging.setLayout(null);
 		
@@ -294,6 +299,29 @@ public class SettingsDialog extends JDialog{
 		btnOpen.setFocusPainted(false);
 		panelNxtDebugging.add(btnOpen);
 		
+		chckbxExceptionparsingAktivieren = new JCheckBox("Exceptionparsing aktivieren");
+		chckbxExceptionparsingAktivieren.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				btnEnterData.setEnabled(chckbxExceptionparsingAktivieren.isSelected());
+				settings.put(settings.EXCEPTIONPARSING_ENABLED, chckbxExceptionparsingAktivieren.isSelected() + "");
+			}
+		});
+		chckbxExceptionparsingAktivieren.setBounds(6, 171, 157, 23);
+		chckbxExceptionparsingAktivieren.setFocusPainted(false);
+		panelNxtDebugging.add(chckbxExceptionparsingAktivieren);
+		
+		btnEnterData = new JButton("Daten eingeben...");
+		btnEnterData.setEnabled(false);
+		btnEnterData.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				ExceptionParsingDialog.getSingletone().setLocationRelativeTo(SettingsDialog.this);
+				ExceptionParsingDialog.getSingletone().setVisible(true);
+			}
+		});
+		btnEnterData.setBounds(293, 171, 121, 23);
+		btnEnterData.setFocusPainted(false);
+		panelNxtDebugging.add(btnEnterData);
+		
 		fileChooser = new JFileChooser(txtUserhome.getText());
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fileChooser.setDialogTitle("Einen Ordner auswählen");
@@ -317,6 +345,10 @@ public class SettingsDialog extends JDialog{
 		chckbxArchiveOldLogFiles.setSelected(settings.getArchiveOldLogFiles());
 		
 		chckbxEnableAutoscroll.setSelected(settings.getNxtDebuggingAutoscrollActive());
+		
+		chckbxExceptionparsingAktivieren.setSelected(settings.getExceptionparsingEnabled());
+		btnEnterData.setEnabled(settings.getExceptionparsingEnabled());
+		ExceptionParsingDialog.getSingletone().parseRawData(settings.getRecentExceptionParsingData());
 	}
 	
 	public static void showDialog(NXTCommunicationFrame parent){

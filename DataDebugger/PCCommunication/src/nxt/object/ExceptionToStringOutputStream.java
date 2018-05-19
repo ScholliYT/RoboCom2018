@@ -17,8 +17,9 @@ public class ExceptionToStringOutputStream extends OutputStream{
 	}
 	
 	public String getBuffer(){
-		buffer.replace('\n', ';');
-		return buffer;
+		String result = buffer.replace('\n', ';');
+		this.buffer = "";
+		return result;
 	}
 	
 }
