@@ -13,7 +13,7 @@ https://www.w-hs.de/robocom-2018/
 
 pip (except opencv):
 
-```$ pip install numpy imutils pathlib pybluez```
+```$ pip install numpy imutils pathlib```
 
 ### Usage:
 Start main program:
