@@ -8,9 +8,11 @@ import numpy as np
 import argparse
 import imutils
 import cv2
+from sys import exit
 import time
 import json
 import os.path
+import bluetooth
 from pathlib import Path
 
 
@@ -58,7 +60,7 @@ args = vars(ap.parse_args())
 
 X_TEXT = 10 #position of text
 
-# define the lower and upper boundaries of the "green"
+# define the lower and upper boundaries of the "greedwfn"
 # ball in the HSV color space, then initialize the
 # list of tracked points
 pts = deque(maxlen=args["buffer"])
@@ -69,7 +71,9 @@ frameTimes = deque(maxlen=10) # collection to calcualte avg of last x frameTimes
 # to the webcam
 if not args.get("video", False):
     camera = cv2.VideoCapture(0)
-
+    if not camera.isOpened():
+        print("Camera can't be initialized")
+        exit()
 # otherwise, grab a reference to the video file
 else:
     camera = cv2.VideoCapture(args["video"])
@@ -84,6 +88,15 @@ if(os.path.isfile(config)):
     setup_trackbars("HSV")
 else:
     setup_trackbarsDefault("HSV")
+
+
+nearby_devices = bluetooth.discover_devices(lookup_names=True)
+print("found %d devices" % len(nearby_devices))
+
+for addr, name in nearby_devices:
+    print("  %s - %s" % (addr, name))
+
+
 # keep looping
 while True:
     startTime = time.time()
