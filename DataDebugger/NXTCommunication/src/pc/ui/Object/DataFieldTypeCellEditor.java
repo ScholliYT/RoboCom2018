@@ -53,6 +53,11 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 		
 		value = null;
 		type = null;
+		
+		if(result == null){
+			return model.getValueAt(currentRow, currentColumn);
+		}
+		
 		return result;
 	}
 	

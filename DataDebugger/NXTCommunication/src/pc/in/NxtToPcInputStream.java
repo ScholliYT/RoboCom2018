@@ -18,7 +18,7 @@ public class NxtToPcInputStream{
 	public int read() throws IOException{
 		return reader.read();
 	}
-
+	
 	public void close() throws IOException{
 		reader.close();
 	}

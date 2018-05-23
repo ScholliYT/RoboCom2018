@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import pc.in.NxtToPcInputStreamManager;
+import pc.object.ShutdownHook;
 import pc.out.PcToNxtOutputStreamManager;
 import pc.ui.NXTCommunicationFrame;
 
@@ -21,6 +22,7 @@ public class NXTCommunication{
 		this.rawOutput = out;
 		this.out = new PcToNxtOutputStreamManager(this, rawOutput);
 		this.in = new NxtToPcInputStreamManager(this, frame, rawInput);
+		ShutdownHook.addShutdownHook(this);
 	}
 	
 	

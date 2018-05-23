@@ -102,6 +102,7 @@ public class NxtToPcInputStreamManager extends Thread{
 						}
 						break;
 					}
+//					Delay.msDelay(50);
 				}
 				Delay.msDelay(50);
 			}catch(IOException e){
