@@ -186,19 +186,6 @@ public class NXTCommunicationFrame extends JFrame{
 		mntmNeueDatenfelderUploaden.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_U, InputEvent.CTRL_MASK));
 		mnComputer.add(mntmNeueDatenfelderUploaden);
 		
-		JMenu mnExceptionparsing = new JMenu("Exceptionparsing");
-		menuBar.add(mnExceptionparsing);
-		
-		JMenuItem mntmExceptionparsingBearbeiten = new JMenuItem("Exceptionparsing bearbeiten...");
-		mntmExceptionparsingBearbeiten.setEnabled(false);
-		mntmExceptionparsingBearbeiten.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				ExceptionParsingDialog.getSingletone().setLocationRelativeTo(NXTCommunicationFrame.this);
-				ExceptionParsingDialog.getSingletone().setVisible(true);
-			}
-		});
-		mnExceptionparsing.add(mntmExceptionparsingBearbeiten);
-		
 		JMenu mnVerbindung = new JMenu("Verbindung");
 		menuBar.add(mnVerbindung);
 		
@@ -417,32 +404,37 @@ public class NXTCommunicationFrame extends JFrame{
 		table.updateUI();
 	}
 	
-	public void displayNxtInput(String input){
-		String out = input + LINE_SEPARATOR;
+	private void writeDisplayMessageToLogFile(String message){
 		if(settings.getCreateLogFilesAutomatically()){
 			try{
-				fos.write(out.getBytes());
+				fos.write(message.getBytes());
 			}catch(IOException e){
 				ExceptionReporter.showDialog(this, e);
 			}
 		}
+	}
+	
+	public void displayNxtInput(String input){
+		String out = input + LINE_SEPARATOR;
+		writeDisplayMessageToLogFile(out);
 		addTextToTextPane(out, Color.BLACK, null);
 	}
 	
 	public void displayNxtErrorInput(String input){
 		String[] traces = input.substring(0, input.length()-1).split(";");
-		addTextToTextPane("Auf dem NXT ist ein Fehler aufgetreten:", Color.RED, null);
+		String buffer = "Auf dem NXT ist ein Fehler aufgetreten:" + LINE_SEPARATOR;
 		if(settings.getExceptionparsingEnabled()){
 			for(String trace: ExceptionParsingDialog.getSingletone().parseException(traces)){
-				addTextToTextPane(trace + "\n", Color.RED, null);
+				buffer += trace + LINE_SEPARATOR;
 			}
 		}else{
 			
 			for(String trace: traces){
-				addTextToTextPane(trace + "\n", Color.RED, null);
+				buffer += trace + LINE_SEPARATOR;
 			}
 		}
-		addTextToTextPane("---------------------------------------", Color.RED, null);
+		addTextToTextPane(buffer, Color.RED, null);
+		writeDisplayMessageToLogFile(buffer);
 	}
 	
 	public void init(InputStream in, OutputStream out){
@@ -514,7 +506,7 @@ public class NXTCommunicationFrame extends JFrame{
 		try{
 			doc.insertString(doc.getLength(), (textAreaNxtInput.getText().endsWith("\n") || textAreaNxtInput.getText().isEmpty() ? "" : "\n") + str, style);
 		}catch(BadLocationException e){
-			e.printStackTrace();
+			ExceptionReporter.showDialog(this, e);
 		}
 		if(settings.getNxtDebuggingAutoscrollActive()){
 			textAreaNxtInput.setCaretPosition(textAreaNxtInput.getDocument().getLength());

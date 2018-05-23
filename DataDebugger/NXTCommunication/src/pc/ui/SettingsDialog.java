@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
+import java.awt.event.WindowFocusListener;
+import java.awt.event.WindowEvent;
 
 public class SettingsDialog extends JDialog{
 	
@@ -48,7 +50,18 @@ public class SettingsDialog extends JDialog{
 	private JCheckBox chckbxExceptionparsingAktivieren;
 	private JButton btnEnterData;
 	
+	private ExceptionParsingDialog dialogExceptionParsing;
+	
 	public SettingsDialog(){
+		addWindowFocusListener(new WindowFocusListener() {
+			public void windowGainedFocus(WindowEvent e){
+				if(dialogExceptionParsing.isVisible()){
+					dialogExceptionParsing.setVisible(false);
+				}
+			}
+			public void windowLostFocus(WindowEvent e){
+			}
+		});
 		setIconImage(Toolkit.getDefaultToolkit().getImage(SettingsDialog.class.getResource("/resources/settings_icon_16px.png")));
 		this.settings = SettingsManager.getSingletone();
 		setTitle("Einstellungen");
@@ -67,7 +80,7 @@ public class SettingsDialog extends JDialog{
 				setVisible(false);
 			}
 		});
-		btnAdopt.setBounds(341, 441, 93, 23);
+		btnAdopt.setBounds(324, 441, 110, 23);
 		btnAdopt.setFocusPainted(false);
 		getContentPane().add(btnAdopt);
 		
@@ -79,7 +92,7 @@ public class SettingsDialog extends JDialog{
 				loadCurrentSettings();
 			}
 		});
-		btnDismiss.setBounds(248, 441, 83, 23);
+		btnDismiss.setBounds(210, 441, 104, 23);
 		btnDismiss.setFocusPainted(false);
 		getContentPane().add(btnDismiss);
 		
@@ -109,7 +122,7 @@ public class SettingsDialog extends JDialog{
 			}
 		});
 		chckbxSaveNewSettingsDirectly.setSelected(true);
-		chckbxSaveNewSettingsDirectly.setBounds(83, 38, 227, 23);
+		chckbxSaveNewSettingsDirectly.setBounds(83, 38, 280, 23);
 		chckbxSaveNewSettingsDirectly.setFocusPainted(false);
 		panelGeneral.add(chckbxSaveNewSettingsDirectly);
 		
@@ -131,7 +144,7 @@ public class SettingsDialog extends JDialog{
 				settings.put(settings.UPLOAD_CHANGES_DIRECTLY_KEY, chckbxChangesDirectlyToNxt.isSelected() + "");
 			}
 		});
-		chckbxChangesDirectlyToNxt.setBounds(6, 15, 203, 23);
+		chckbxChangesDirectlyToNxt.setBounds(6, 15, 282, 23);
 		chckbxChangesDirectlyToNxt.setFocusPainted(false);
 		panelDatafields.add(chckbxChangesDirectlyToNxt);
 		
@@ -142,7 +155,7 @@ public class SettingsDialog extends JDialog{
 				settings.put(settings.DELETE_ROWS_DIRECTLY_KEY, chckbxDeleteWithoutDialog.isSelected() + "");
 			}
 		});
-		chckbxDeleteWithoutDialog.setBounds(6, 67, 195, 23);
+		chckbxDeleteWithoutDialog.setBounds(6, 67, 282, 23);
 		chckbxDeleteWithoutDialog.setFocusPainted(false);
 		panelDatafields.add(chckbxDeleteWithoutDialog);
 		
@@ -154,7 +167,7 @@ public class SettingsDialog extends JDialog{
 			}
 		});
 		chckbxCreateNewRowWithDialog.setSelected(true);
-		chckbxCreateNewRowWithDialog.setBounds(6, 93, 187, 23);
+		chckbxCreateNewRowWithDialog.setBounds(6, 93, 282, 23);
 		chckbxCreateNewRowWithDialog.setFocusPainted(false);
 		panelDatafields.add(chckbxCreateNewRowWithDialog);
 		
@@ -166,11 +179,11 @@ public class SettingsDialog extends JDialog{
 			}
 		});
 		chckbxUpdateIncremtally.setToolTipText("Nur ver\u00E4nderte Datenfelder werden an den NXT geschickt. Hilft, den Datenverkehr und die Verarbeitungsgeschwindigkeit auf dem NXT zu verringern");
-		chckbxUpdateIncremtally.setBounds(6, 41, 203, 23);
+		chckbxUpdateIncremtally.setBounds(6, 41, 282, 23);
 		chckbxUpdateIncremtally.setFocusPainted(false);
 		panelDatafields.add(chckbxUpdateIncremtally);
 		
-		btnResetSettings = new JButton("Standardeinstellungen wiederherstellen");
+		btnResetSettings = new JButton("Standard wiederherstellen");
 		btnResetSettings.setToolTipText("Stellt die Standardeinstellungen wieder her");
 		btnResetSettings.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -206,7 +219,7 @@ public class SettingsDialog extends JDialog{
 				settings.saveCurrentSettings();
 			}
 		});
-		btnResetSettings.setBounds(10, 441, 228, 23);
+		btnResetSettings.setBounds(10, 441, 190, 23);
 		btnResetSettings.setFocusPainted(false);
 		getContentPane().add(btnResetSettings);
 		
@@ -226,7 +239,7 @@ public class SettingsDialog extends JDialog{
 				settings.put(settings.CREATE_AUTOMATIC_LOG_FILES_KEY, chckbxAutomaticallyCreateLogs.isSelected() + "");
 			}
 		});
-		chckbxAutomaticallyCreateLogs.setBounds(6, 20, 231, 23);
+		chckbxAutomaticallyCreateLogs.setBounds(6, 20, 308, 23);
 		chckbxAutomaticallyCreateLogs.setFocusPainted(false);
 		panelNxtDebugging.add(chckbxAutomaticallyCreateLogs);
 		
@@ -253,7 +266,7 @@ public class SettingsDialog extends JDialog{
 			}
 		});
 		btnSelectLogFolder.setEnabled(false);
-		btnSelectLogFolder.setBounds(271, 81, 143, 23);
+		btnSelectLogFolder.setBounds(241, 81, 173, 23);
 		btnSelectLogFolder.setFocusPainted(false);
 		panelNxtDebugging.add(btnSelectLogFolder);
 		
@@ -269,7 +282,7 @@ public class SettingsDialog extends JDialog{
 			}
 		});
 		chckbxEnableAutoscroll.setSelected(true);
-		chckbxEnableAutoscroll.setBounds(6, 145, 175, 23);
+		chckbxEnableAutoscroll.setBounds(6, 145, 225, 23);
 		chckbxEnableAutoscroll.setFocusPainted(false);
 		panelNxtDebugging.add(chckbxEnableAutoscroll);
 		
@@ -281,11 +294,12 @@ public class SettingsDialog extends JDialog{
 			}
 		});
 		chckbxArchiveOldLogFiles.setSelected(true);
-		chckbxArchiveOldLogFiles.setBounds(6, 119, 295, 23);
+		chckbxArchiveOldLogFiles.setBounds(6, 119, 333, 23);
 		chckbxArchiveOldLogFiles.setFocusPainted(false);
 		panelNxtDebugging.add(chckbxArchiveOldLogFiles);
 		
 		btnOpen = new JButton("Anzeigen...");
+		btnOpen.setToolTipText("Zeigt den aktuellen Speicherpfad im System an");
 		btnOpen.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				try{
@@ -295,30 +309,32 @@ public class SettingsDialog extends JDialog{
 				}
 			}
 		});
-		btnOpen.setBounds(173, 81, 88, 23);
+		btnOpen.setBounds(116, 81, 115, 23);
 		btnOpen.setFocusPainted(false);
 		panelNxtDebugging.add(btnOpen);
 		
 		chckbxExceptionparsingAktivieren = new JCheckBox("Exceptionparsing aktivieren");
+		chckbxExceptionparsingAktivieren.setToolTipText("Aktiviert die Aufl\u00F6sung von Fehlermeldungen mit den eingegebenen Daten");
 		chckbxExceptionparsingAktivieren.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				btnEnterData.setEnabled(chckbxExceptionparsingAktivieren.isSelected());
 				settings.put(settings.EXCEPTIONPARSING_ENABLED, chckbxExceptionparsingAktivieren.isSelected() + "");
 			}
 		});
-		chckbxExceptionparsingAktivieren.setBounds(6, 171, 157, 23);
+		chckbxExceptionparsingAktivieren.setBounds(6, 171, 225, 23);
 		chckbxExceptionparsingAktivieren.setFocusPainted(false);
 		panelNxtDebugging.add(chckbxExceptionparsingAktivieren);
 		
 		btnEnterData = new JButton("Daten eingeben...");
+		btnEnterData.setToolTipText("Daten zur Fehleraufl\u00F6sung eingeben");
 		btnEnterData.setEnabled(false);
 		btnEnterData.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				ExceptionParsingDialog.getSingletone().setLocationRelativeTo(SettingsDialog.this);
-				ExceptionParsingDialog.getSingletone().setVisible(true);
+				dialogExceptionParsing.setLocationRelativeTo(SettingsDialog.this);
+				dialogExceptionParsing.setVisible(true);
 			}
 		});
-		btnEnterData.setBounds(293, 171, 121, 23);
+		btnEnterData.setBounds(257, 171, 157, 23);
 		btnEnterData.setFocusPainted(false);
 		panelNxtDebugging.add(btnEnterData);
 		
@@ -326,6 +342,8 @@ public class SettingsDialog extends JDialog{
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 		fileChooser.setDialogTitle("Einen Ordner auswählen");
 		fileChooser.setApproveButtonText("Okay");
+		
+		this.dialogExceptionParsing = ExceptionParsingDialog.getSingletone();
 		
 		loadCurrentSettings();
 	}
@@ -348,7 +366,7 @@ public class SettingsDialog extends JDialog{
 		
 		chckbxExceptionparsingAktivieren.setSelected(settings.getExceptionparsingEnabled());
 		btnEnterData.setEnabled(settings.getExceptionparsingEnabled());
-		ExceptionParsingDialog.getSingletone().parseRawData(settings.getRecentExceptionParsingData());
+		this.dialogExceptionParsing.parseRawData(settings.getRecentExceptionParsingData());
 	}
 	
 	public static void showDialog(NXTCommunicationFrame parent){

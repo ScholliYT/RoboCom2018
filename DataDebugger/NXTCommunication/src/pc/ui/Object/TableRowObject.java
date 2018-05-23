@@ -64,16 +64,16 @@ public class TableRowObject{
 					this.value = newValue;
 					break;
 				case INTEGER:
-					this.value = Integer.parseInt((String) newValue);
+					this.value = Integer.parseInt(newValue + "");
 					break;
 				case LONG:
-					this.value = Long.parseLong((String) newValue);
+					this.value = Long.parseLong(newValue + "");
 					break;
 				case DOUBLE:
-					this.value = Double.parseDouble((String) newValue);
+					this.value = Double.parseDouble(newValue + "");
 					break;
 				case FLOAT:
-					this.value = Float.parseFloat((String) newValue);
+					this.value = Float.parseFloat(newValue + "");
 					break;
 				default:
 					this.value = 0;

@@ -49,7 +49,7 @@ public class ExceptionReporter extends JDialog{
 		getContentPane().setLayout(null);
 		
 		JLabel lblEinUnerwarteterFehler = new JLabel("Ein unerwarteter Fehler ist aufgetreten:");
-		lblEinUnerwarteterFehler.setBounds(10, 11, 193, 14);
+		lblEinUnerwarteterFehler.setBounds(10, 11, 604, 14);
 		getContentPane().add(lblEinUnerwarteterFehler);
 		
 		JSeparator separator = new JSeparator();
@@ -62,17 +62,18 @@ public class ExceptionReporter extends JDialog{
 				System.exit(0);
 			}
 		});
-		btnShutdown.setBounds(489, 344, 125, 23);
+		btnShutdown.setBounds(444, 344, 170, 23);
 		btnShutdown.setFocusPainted(false);
 		getContentPane().add(btnShutdown);
 		
 		btnRestart = new JButton("Programm neu starten");
+		btnRestart.setEnabled(false);
 		btnRestart.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				//TODO
 			}
 		});
-		btnRestart.setBounds(340, 344, 139, 23);
+		btnRestart.setBounds(244, 344, 190, 23);
 		btnRestart.setFocusPainted(false);
 		getContentPane().add(btnRestart);
 		

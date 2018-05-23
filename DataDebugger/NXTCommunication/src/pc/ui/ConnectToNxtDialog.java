@@ -89,7 +89,7 @@ public class ConnectToNxtDialog extends JFrame{
 		});
 		btnConnect.setToolTipText("Versuchen, zu einem NXT mit den obrigen Einstellungen zu verbinden");
 		btnConnect.setFocusPainted(false);
-		btnConnect.setBounds(186, 167, 149, 23);
+		btnConnect.setBounds(129, 167, 177, 23);
 		getContentPane().add(btnConnect);
 		
 		btnCancel = new JButton("Beenden");
@@ -100,7 +100,7 @@ public class ConnectToNxtDialog extends JFrame{
 		});
 		btnCancel.setToolTipText("Software beenden");
 		btnCancel.setFocusPainted(false);
-		btnCancel.setBounds(345, 167, 89, 23);
+		btnCancel.setBounds(316, 167, 118, 23);
 		getContentPane().add(btnCancel);
 		
 		JPanel panel = new JPanel();
@@ -110,11 +110,11 @@ public class ConnectToNxtDialog extends JFrame{
 		panel.setLayout(null);
 		
 		JLabel lblNxtName = new JLabel("NXT-Name:");
-		lblNxtName.setBounds(10, 21, 54, 14);
+		lblNxtName.setBounds(10, 21, 80, 14);
 		panel.add(lblNxtName);
 		
 		JLabel lblConnectionType = new JLabel("Verbindungsmodus:");
-		lblConnectionType.setBounds(10, 49, 94, 14);
+		lblConnectionType.setBounds(10, 49, 118, 14);
 		panel.add(lblConnectionType);
 		
 		rdbtnUsbConnection = new JRadioButton("USB-Verbindung");
@@ -127,7 +127,7 @@ public class ConnectToNxtDialog extends JFrame{
 		rdbtnUsbConnection.setFocusPainted(false);
 		rdbtnUsbConnection.setToolTipText("NXT & PC mithilfe einer USB-Verbindung verbinden");
 		rdbtnUsbConnection.setSelected(true);
-		rdbtnUsbConnection.setBounds(110, 45, 103, 23);
+		rdbtnUsbConnection.setBounds(134, 45, 127, 23);
 		panel.add(rdbtnUsbConnection);
 		
 		rdbtnBluetoothConnection = new JRadioButton("Bluetooth-Verbindung");
@@ -139,7 +139,7 @@ public class ConnectToNxtDialog extends JFrame{
 		});
 		rdbtnBluetoothConnection.setFocusPainted(false);
 		rdbtnBluetoothConnection.setToolTipText("NXT & PC mithilfe einer Bluetooth-Verbindung verbinden");
-		rdbtnBluetoothConnection.setBounds(215, 45, 129, 23);
+		rdbtnBluetoothConnection.setBounds(263, 45, 151, 23);
 		panel.add(rdbtnBluetoothConnection);
 		
 		try{
@@ -156,13 +156,13 @@ public class ConnectToNxtDialog extends JFrame{
 		bg.add(rdbtnUsbConnection);
 		
 		JLabel lblTimeout = new JLabel("Timeout:");
-		lblTimeout.setBounds(10, 74, 46, 14);
+		lblTimeout.setBounds(10, 74, 118, 14);
 		panel.add(lblTimeout);
 		
 		spinnerTimeout = new JSpinner();
 		spinnerTimeout.setToolTipText("Maximale Laufzeit des Verbindungsvorgangs in Millisekunden. (Nur USB)");
 		spinnerTimeout.setModel(new SpinnerNumberModel(5000, 0, 100000, 100));
-		spinnerTimeout.setBounds(110, 75, 304, 20);
+		spinnerTimeout.setBounds(134, 75, 280, 20);
 		panel.add(spinnerTimeout);
 		
 		pbConnection = new JProgressBar();
@@ -176,7 +176,7 @@ public class ConnectToNxtDialog extends JFrame{
 		cbNxtName.setToolTipText("Den NXT-Namen hier eingeben oder ausw\u00E4hlen");
 		cbNxtName.setEditable(true);
 		
-		cbNxtName.setBounds(110, 18, 304, 20);
+		cbNxtName.setBounds(134, 18, 280, 20);
 		
 		panel.add(cbNxtName);
 		

@@ -123,12 +123,12 @@ public class PCCommunicationManager implements Closeable{
 	 */
 	public void writeException(Throwable ex){
 		ex.printStackTrace(ps);
-//		Delay.msDelay(50);
 		writeString("ex!" + ps.getExcpetionAsString());
 	}
 	
 	/**
-	 * Leitet den Verkehr von System.out.println(String s) auf den PC-Debugger um
+	 * Leitet den Verkehr von System.out.println(String s) auf den PC-Debugger um<br>
+	 * Bei verwendung von anderen Methoden kommt es zu unerwarteten Ergebnissen auf dem PC
 	 */
 	public void redirectSystemOutputToConnectedPC(){
 		PrintStream ps = new PrintStream(out.getRawOutputStream());

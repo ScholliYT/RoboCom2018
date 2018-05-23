@@ -11,6 +11,7 @@ import lejos.util.Delay;
 import nxt.connection.NxtDataField;
 import nxt.connection.PCCommunicationManager;
 import nxt.object.DataFieldType;
+import nxt.object.ShutdownHook;
 
 /**
  * Dient zur Verbindung mit dem PC. Sobald initiiert, die attemptConnection()-Methode dieser
@@ -174,6 +175,9 @@ public class PCConnector{
 		}
 		progress.connectionEstablished();
 		Delay.msDelay(150);
+		if(result != null){
+			ShutdownHook.addShutdownHook(result);
+		}
 		return result;
 	}
 	

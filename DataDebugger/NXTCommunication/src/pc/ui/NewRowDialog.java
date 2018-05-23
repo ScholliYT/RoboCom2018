@@ -43,11 +43,11 @@ public class NewRowDialog extends JDialog{
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setType(Type.POPUP);
-		setBounds(100, 100, 348, 150);
+		setBounds(100, 100, 380, 150);
 		getContentPane().setLayout(null);
 		
 		JSeparator separator = new JSeparator();
-		separator.setBounds(0, 86, 342, 2);
+		separator.setBounds(0, 86, 374, 2);
 		getContentPane().add(separator);
 		
 		btnConfirm = new JButton("\u00DCbernehmen");
@@ -73,7 +73,7 @@ public class NewRowDialog extends JDialog{
 				}
 			}
 		});
-		btnConfirm.setBounds(133, 92, 93, 23);
+		btnConfirm.setBounds(116, 92, 119, 23);
 		btnConfirm.setFocusPainted(false);
 		getContentPane().add(btnConfirm);
 		
@@ -84,27 +84,27 @@ public class NewRowDialog extends JDialog{
 				setVisible(false);
 			}
 		});
-		btnCancel.setBounds(236, 92, 93, 23);
+		btnCancel.setBounds(245, 92, 119, 23);
 		btnCancel.setFocusPainted(false);
 		getContentPane().add(btnCancel);
 		
 		JLabel lblDatenfeldname = new JLabel("Datenfeldname:");
-		lblDatenfeldname.setBounds(10, 11, 77, 14);
+		lblDatenfeldname.setBounds(10, 11, 112, 14);
 		getContentPane().add(lblDatenfeldname);
 		
 		JLabel lblDatentyp = new JLabel("Datentyp:");
-		lblDatentyp.setBounds(10, 36, 77, 14);
+		lblDatentyp.setBounds(10, 36, 112, 14);
 		getContentPane().add(lblDatentyp);
 		
 		JLabel lblWert = new JLabel("Wert:");
-		lblWert.setBounds(10, 61, 77, 14);
+		lblWert.setBounds(10, 61, 112, 14);
 		getContentPane().add(lblWert);
 		
 		tfDatafieldName = new JTextField();
 		tfDatafieldName.setToolTipText("Geben Sie hier einen Datenfeldnamen ein. Dieser darf noch nicht existieren");
 		tfDatafieldName.setText("(Datenfeldname)");
 		tfDatafieldName.setHorizontalAlignment(SwingConstants.RIGHT);
-		tfDatafieldName.setBounds(97, 8, 232, 20);
+		tfDatafieldName.setBounds(132, 8, 232, 20);
 		getContentPane().add(tfDatafieldName);
 		tfDatafieldName.setColumns(10);
 		
@@ -144,21 +144,21 @@ public class NewRowDialog extends JDialog{
 		});
 		cbDataType.setModel(new DefaultComboBoxModel<>(new String[] {"String", "Integer", "Long", "Double", "Float"}));
 		cbDataType.setFocusable(false);
-		cbDataType.setBounds(97, 33, 232, 20);
+		cbDataType.setBounds(132, 33, 232, 20);
 		getContentPane().add(cbDataType);
 		
 		tfValue = new JTextField();
 		tfValue.setToolTipText("Geben Sie hier den Wert f\u00FCr das Datenfeld ein");
 		tfValue.setText("(Datenfeldwert)");
 		tfValue.setHorizontalAlignment(SwingConstants.RIGHT);
-		tfValue.setBounds(97, 58, 232, 20);
+		tfValue.setBounds(132, 58, 232, 20);
 		getContentPane().add(tfValue);
 		tfValue.setColumns(10);
 		
 		spinner = new JSpinner();
 		spinner.setToolTipText("Geben Sie hier den Wert f\u00FCr das Datenfeld ein");
 		spinner.setVisible(false);
-		spinner.setBounds(97, 58, 232, 20);
+		spinner.setBounds(132, 58, 232, 20);
 		getContentPane().add(spinner);
 		
 		this.modelInteger = new SpinnerNumberModel(new Integer(0), null, null, 1);

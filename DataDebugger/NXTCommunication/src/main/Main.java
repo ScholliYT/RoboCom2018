@@ -9,7 +9,7 @@ import pc.ui.SettingsDialog;
 
 public class Main{
 	
-	public static void main(String args[]) throws InterruptedException{
+	public static void main(String args[]){
 		try{
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		}catch(Exception e){

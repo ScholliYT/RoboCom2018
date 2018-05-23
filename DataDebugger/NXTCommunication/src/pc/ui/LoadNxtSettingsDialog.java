@@ -56,7 +56,7 @@ public class LoadNxtSettingsDialog extends JDialog{
 				LoadNxtSettingsDialog.this.setVisible(false);
 			}
 		});
-		btnAbbrechen.setBounds(345, 111, 89, 23);
+		btnAbbrechen.setBounds(314, 111, 120, 23);
 		btnAbbrechen.setFocusPainted(false);
 		getContentPane().add(btnAbbrechen);
 		
