@@ -66,9 +66,11 @@ public class NewRowDialog extends JDialog{
 					parent.getModel().setValueAt(type, row, 1);
 					parent.getModel().setValueAt((type == DataFieldType.STRING ? tfValue.getText() : ((Number) spinner.getValue()) + ""), row, 2);
 					parent.getTable().updateUI();
+					parent.showWarning();
 					setVisible(false);
 				}else if(parent.isDatafieldNameAvailable(tfDatafieldName.getText())){
 					parent.addNewRow(tfDatafieldName.getText(), type, (type == DataFieldType.STRING ? tfValue.getText() : ((Number) spinner.getValue()) + ""));
+					parent.showWarning();
 					setVisible(false);
 				}
 			}
@@ -174,6 +176,7 @@ public class NewRowDialog extends JDialog{
 		if(SINGLETONE == null){
 			SINGLETONE = new NewRowDialog(parent);
 		}
+		SINGLETONE.setTitle("Datenfeld bearbeiten");
 		SINGLETONE.editMode = true;
 		SINGLETONE.row = row;
 		SINGLETONE.tfDatafieldName.setText(name);
@@ -226,6 +229,7 @@ public class NewRowDialog extends JDialog{
 		if(SINGLETONE == null){
 			SINGLETONE = new NewRowDialog(parent);
 		}
+		SINGLETONE.setTitle("Neues Datenfeld erzeugen");
 		SINGLETONE.editMode = false;
 		SINGLETONE.setLocationRelativeTo(parent);
 		SINGLETONE.setVisible(true);

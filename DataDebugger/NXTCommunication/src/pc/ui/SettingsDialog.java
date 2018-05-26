@@ -137,7 +137,6 @@ public class SettingsDialog extends JDialog{
 		panelDatafields.setLayout(null);
 		
 		chckbxChangesDirectlyToNxt = new JCheckBox("\u00C4nderungen automatisch \u00FCbertragen");
-		chckbxChangesDirectlyToNxt.setEnabled(false);
 		chckbxChangesDirectlyToNxt.setToolTipText("Sollen ver\u00E4nderte Datenfelder automatisch an den NXT \u00FCbertragen werden?");
 		chckbxChangesDirectlyToNxt.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){

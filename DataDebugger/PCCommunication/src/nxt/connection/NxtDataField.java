@@ -15,6 +15,7 @@ public class NxtDataField{
 	/**
 	 * Nicht manuell instanzieren!
 	 */
+	@Deprecated
 	public NxtDataField(String name, DataFieldType type, String value){
 		this.name = name;
 		this.type = type;
@@ -36,6 +37,15 @@ public class NxtDataField{
 				this.value = Float.parseFloat(value);
 				break;
 		}
+	}
+	
+	/**
+	 * Nicht manuell instanzieren!
+	 */
+	public NxtDataField(String name, DataFieldType type, Object value){
+		this.name = name;
+		this.type = type;
+		this.value = value;
 	}
 	
 	/**

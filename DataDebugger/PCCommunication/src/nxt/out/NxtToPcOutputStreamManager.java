@@ -28,16 +28,18 @@ public class NxtToPcOutputStreamManager extends Thread{
 	
 	@Override
 	public void run(){
-		String[] msg;
+		String[] msg = new String[0];
 		int length;
 		while(parent.isAvailable()){
 			try{
 				if(toWrite.size() != 0){
 					synchronized(toWrite){
 						length = toWrite.size();
-						msg = new String[length];
-						System.arraycopy(toWrite.toArray(new String[length]), 0, msg, 0, length);
-						toWrite.clear();
+						if(length != 0){
+							msg = new String[length];
+							System.arraycopy(toWrite.toArray(new String[length]), 0, msg, 0, length);
+							toWrite.clear();
+						}
 					}
 					for(String message: msg){
 						out.write(message + "\n");
@@ -47,21 +49,10 @@ public class NxtToPcOutputStreamManager extends Thread{
 					out.write(" " + "\n");
 					out.flush();
 				}
-//					while(toWrite.size() > 0){
-//						Iterator<String> it = toWrite.iterator();
-//						
-//						while(it.hasNext()){
-//							out.write(it.next() + "\n");
-//							out.flush();
-//							it.remove();
-//						}
-//						toWrite.clear();
-//					}
-//				}
 			}catch(Exception e){
 				parent.close();
 			}
-			Delay.msDelay(125);
+			Delay.msDelay(250);
 		}
 		
 		try{
