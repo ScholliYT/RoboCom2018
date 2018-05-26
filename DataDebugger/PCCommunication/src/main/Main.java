@@ -1,7 +1,5 @@
 package main;
 
-import java.util.ArrayList;
-
 import lejos.nxt.Button;
 import lejos.util.Delay;
 import nxt.connection.NxtDataField;
@@ -16,7 +14,7 @@ public class Main{
 		PCConnector connector = null;
 		try{
 			connector = new PCConnector(ConnectionType.BLUETOOTH, new byte[] {1, 2, 3, 4}, true, true, "Datenfeldname", "I bims 1 String", "Double", 3.3D,
-					"Long", 19811918184L, "Float", 3.3F, "Integer", 33);  //Versuchen, eine Instanz der Klasse PCConnector zu erstellen
+					"Long", 19811918184L, "Float", 3.3F, "Integer", 33); //Versuchen, eine Instanz der Klasse PCConnector zu erstellen
 		}catch(IllegalArgumentException iae){ //Das Object[] enthält einen Syntaxfehler
 			System.out.println(iae.getMessage()); //Den Fehler ausgeben
 			while(!Button.RIGHT.isDown()); //Auf Bestätigung des Nutzers warten
@@ -33,7 +31,7 @@ public class Main{
 		while(!Button.ESCAPE.isDown()){ //Programmhauptschleife
 			
 			if(!man.isAvailable()){ //Prüfen, ob der PCCommunicationmanager geschlossen wurde
-				System.out.println("Connection closed!"); 
+				System.out.println("Connection closed!");
 				return;
 			}
 			
@@ -52,7 +50,7 @@ public class Main{
 			}
 			
 			if(man.hasDatafieldUpdate()){ //Prüfen, ob es ein Datenfeldupdate gibt
-				ArrayList<NxtDataField> newDatafields = man.getDatafields(); //Die neuen Datenfelder hohlen
+				NxtDataField[] newDatafields = man.getDatafields(); //Die neuen Datenfelder hohlen
 				//Etwas mit den Daten machen
 			}
 			Delay.msDelay(10);

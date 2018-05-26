@@ -103,6 +103,7 @@ public class ExceptionParsingDialog extends JDialog{
 		));
 		tableData.setAutoCreateColumnsFromModel(false);
 		tableData.setRowSelectionAllowed(false);
+		tableData.getTableHeader().setReorderingAllowed(false);
 		modelColumn = tableData.getColumnModel();
 		scrollPane.setViewportView(tableData);
 		
@@ -151,11 +152,11 @@ public class ExceptionParsingDialog extends JDialog{
 			ArrayList<String[]> rows = new ArrayList<String[]>();
 			
 			for(Entry<Integer, String> entry: classes.entrySet()){
-				rows.add(new String[] {"Class " + entry.getKey(), entry.getValue()});
+				rows.add(new String[] {" Class " + entry.getKey(), " " + entry.getValue()});
 			}
 			
 			for(Entry<Integer, String> entry: methods.entrySet()){
-				rows.add(new String[] {"Method " + entry.getKey(), entry.getValue()});
+				rows.add(new String[] {" Method " + entry.getKey(), entry.getValue()});
 			}
 			
 			DefaultTableModel model = new DefaultTableModel();

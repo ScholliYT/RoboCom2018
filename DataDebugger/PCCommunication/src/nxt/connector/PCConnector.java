@@ -86,7 +86,7 @@ public class PCConnector{
 	}
 	
 	private void validateDatafields(Object[] data) throws IllegalArgumentException{
-		if(data.length % 2 != 0) throw new IllegalArgumentException("Die datafields im PCConnector müssen eine gerade Anzahl haben!");
+		if(data.length % 2 != 0) throw new IllegalArgumentException("Die Datafields im PCConnector muessen eine gerade Anzahl haben!");
 		ArrayList<NxtDataField> list = new ArrayList<>();
 		String currentName = "";
 		for(int i = 0; i < data.length; i++){
@@ -112,7 +112,7 @@ public class PCConnector{
 				}else{
 					throw new IllegalArgumentException("Falscher Datenfeldtyp im PCConnector");
 				}
-				list.add(new NxtDataField(currentName, type, field + ""));
+				list.add(new NxtDataField(currentName, type, field));
 				currentName = "";
 			}
 		}
