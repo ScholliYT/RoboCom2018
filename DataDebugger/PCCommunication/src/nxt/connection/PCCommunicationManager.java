@@ -51,7 +51,7 @@ public class PCCommunicationManager implements Closeable{
 	}
 	
 	/**
-	 * SChaut, ob es ein Update für die Datenfelder gibt
+	 * Schaut, ob es ein Update für die Datenfelder gibt
 	 * @return <code>true</code>, wenn es ein Update gibt, ansonsten <code>false</code>
 	 */
 	public boolean hasDatafieldUpdate(){
@@ -61,11 +61,16 @@ public class PCCommunicationManager implements Closeable{
 	/**
 	 * Gibt die aktuellen Datenfelder als Array zurück und setzt
 	 * den hasDatafieldUpdate-Wert zurück
-	 * @return <code>ArrayList<NxtDataField</code> mit allen Datenfeldern
+	 * @return <code>NxtDataField[]</code> mit allen Datenfeldern
 	 */
-	public ArrayList<NxtDataField> getDatafields(){
+	public NxtDataField[] getDatafields(){
 		this.datafieldUpdate = false;
-		return dataFields;
+		NxtDataField[] result;
+		synchronized(dataFields){
+			result = new NxtDataField[dataFields.size()];
+			System.arraycopy(dataFields.toArray(new NxtDataField[dataFields.size()]), 0, result, 0, dataFields.size());
+		}
+		return result;
 	}
 	
 	/**
@@ -74,39 +79,52 @@ public class PCCommunicationManager implements Closeable{
 	 * @param incoming
 	 */
 	public void resolveIncomingDatafieldUpdate(String incoming){
-		this.datafieldUpdate = true; //TODO Synchronisieren?
-		dataFields.clear();
-		incoming = incoming.substring(3, incoming.length()-1);
-		String name = "";
-		String type = "";
-		String value = "";
-		String buffer = "";
-		int doppelCount = 0;
-		char[] chars = incoming.toCharArray();
-		for(int i = 0; i < chars.length; i++){
-			char c = chars[i];
-			if(c != ':' && c != ';'){
-				buffer += c;
-				continue;
-			}else if(c == ':'){
-				doppelCount++;
-				if(doppelCount == 1){
-					name = buffer;
-				}else if(doppelCount == 2){
-					type = buffer;
+		synchronized(dataFields){
+			dataFields.clear();
+			incoming = incoming.substring(3, incoming.length()-1);
+			String name = "";
+			String type = "";
+			String value = "";
+			String buffer = "";
+			int doppelCount = 0;
+			char[] chars = incoming.toCharArray();
+			for(int i = 0; i < chars.length; i++){
+				char c = chars[i];
+				if(c != ':' && c != ';'){
+					buffer += c;
+					continue;
+				}else if(c == ':'){
+					doppelCount++;
+					if(doppelCount == 1){
+						name = buffer;
+					}else if(doppelCount == 2){
+						type = buffer;
+					}
+					buffer = "";
+				}else if(c == ';'){
+					value = buffer;
+					doppelCount = 0;
+					DataFieldType t = DataFieldType.getDataFieldTypeFromString(type);
+					dataFields.add(new NxtDataField(name, t, t.getObjectFromString(value)));
+					buffer = "";
+					name = "";
+					type = "";
+					value = "";
 				}
-				buffer = "";
-			}else if(c == ';'){
-				value = buffer;
-				doppelCount = 0;
-				dataFields.add(new NxtDataField(name, DataFieldType.getDataFieldTypeFromString(type), value));
-				buffer = "";
-				name = "";
-				type = "";
-				value = "";
 			}
 		}
 		this.datafieldUpdate = true;
+	}
+	
+	public void editDatafield(String name, Object newValue){
+		synchronized(dataFields){
+			for(NxtDataField tf: dataFields){
+				if(tf.getName().equals(name)){
+					dataFields.remove(tf);
+					dataFields.add(new NxtDataField(name, DataFieldType.guessDataFieldTypeFromObject(newValue), newValue));
+				}
+			}
+		}
 	}
 	
 	/**

@@ -44,8 +44,7 @@ public class NXTCommunication{
 		
 		frame.onConnectionClosed(closeApplication);
 	}
-
-
+	
 	public boolean isClosed(){
 		return in.isInterrupted() && out.isInterrupted();
 	}

@@ -1,22 +1,27 @@
 package pc.ui.Object;
 
-import javax.swing.table.*;
 
 import pc.object.DataFieldType;
+import pc.object.SettingsManager;
+import pc.ui.NXTCommunicationFrame;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import javax.swing.table.AbstractTableModel;
 
 public class MyFileTableModel extends AbstractTableModel{
 	
 	private static final long serialVersionUID = -3242633261860549351L;
 	
 	private String[] columnNames;
+	private NXTCommunicationFrame frame;
 	private ArrayList<TableRowObject> content;
 	
-	public MyFileTableModel(){
+	public MyFileTableModel(NXTCommunicationFrame frame){
+		this.frame = frame;
 		this.columnNames = new String[] {"Feldname", "Datenfeldtyp", "Wert"};
 		this.content = new ArrayList<>();
-//		addRow("feldname", DataFieldType.STRING, "abc123");
 	}
 	
 	@Override
@@ -39,7 +44,9 @@ public class MyFileTableModel extends AbstractTableModel{
 				obj.setValue(aValue);
 				break;
 		}
-		
+		if(SettingsManager.getSingletone().getUploadChangesAutomatically()){
+			frame.uploadCurrentDatafields();
+		}
 	}
 	
 	@Override

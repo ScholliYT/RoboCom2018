@@ -17,8 +17,8 @@ public class ExceptionParsingTableCellRenderer extends DefaultTableCellRenderer{
 	public ExceptionParsingTableCellRenderer(){
 		UIDefaults defaults = UIManager.getDefaults();
 		this.myLightGray = new Color(235, 235, 235);
-		defaultSelectionForeground = defaults.getColor("List.selectionForeground");
-		defaultSelectionBackground = defaults.getColor("List.selectionBackground");
+		this.defaultSelectionForeground = defaults.getColor("List.selectionForeground");
+		this.defaultSelectionBackground = defaults.getColor("List.selectionBackground");
 	}
 	
 	@Override
