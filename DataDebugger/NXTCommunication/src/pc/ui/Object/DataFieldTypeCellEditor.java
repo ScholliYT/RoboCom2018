@@ -9,6 +9,8 @@ import java.util.EventObject;
 import javax.swing.table.*;
 
 import pc.object.DataFieldType;
+import pc.object.SettingsManager;
+import pc.ui.NXTCommunicationFrame;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -24,11 +26,13 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 	private DataFieldType type;
 	private Object value;
 	
+	private NXTCommunicationFrame frame;
 	private MyFileTableModel model;
 	
 	private int currentRow, currentColumn;
 	
-	public DataFieldTypeCellEditor(MyFileTableModel model){
+	public DataFieldTypeCellEditor(NXTCommunicationFrame frame, MyFileTableModel model){
+		this.frame = frame;
 		this.model = model;
 	}
 	
@@ -57,7 +61,9 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 		if(result == null){
 			return model.getValueAt(currentRow, currentColumn);
 		}
-		
+		if(!SettingsManager.getSingletone().getUploadChangesAutomatically()){
+			frame.showWarning();
+		}
 		return result;
 	}
 	
@@ -166,7 +172,7 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 			JSpinner spinner = null;
 			switch(type){
 				case STRING:
-					JTextField field = new JTextField((String) value);
+					JTextField field = new JTextField(value + "");
 					field.addActionListener(this);
 					field.getDocument().putProperty("me", field);
 					field.getDocument().addDocumentListener(this);

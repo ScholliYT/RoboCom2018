@@ -25,4 +25,35 @@ public enum DataFieldType{
 		}
 	}
 	
+	public Object getObjectFromString(String str){
+		switch(this){
+			case STRING:
+				return str;
+			case INTEGER:
+				return Integer.parseInt(str);
+			case LONG:
+				return Long.parseLong(str);
+			case DOUBLE:
+				return Double.parseDouble(str);
+			case FLOAT:
+				return Float.parseFloat(str);
+			default:
+				return str;
+		}
+	}
+	
+	public static DataFieldType guessDataFieldTypeFromObject(Object o){
+		if(o instanceof Integer){
+			return INTEGER;
+		}else if(o instanceof Long){
+			return LONG;
+		}else if(o instanceof Double){
+			return DOUBLE;
+		}else if(o instanceof Float){
+			return FLOAT;
+		}else{
+			return STRING;
+		}
+	}
+	
 }
