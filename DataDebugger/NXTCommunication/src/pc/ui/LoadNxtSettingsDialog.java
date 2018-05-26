@@ -20,6 +20,7 @@ public class LoadNxtSettingsDialog extends JDialog{
 	private static LoadNxtSettingsDialog SINGLETONE;
 	
 	public LoadNxtSettingsDialog() {
+		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setResizable(false);
@@ -50,6 +51,7 @@ public class LoadNxtSettingsDialog extends JDialog{
 		getContentPane().add(separator);
 		
 		JButton btnAbbrechen = new JButton("Abbrechen");
+		btnAbbrechen.setEnabled(false);
 		btnAbbrechen.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				//TODO Abbruch initialisieren!

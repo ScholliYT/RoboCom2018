@@ -51,8 +51,10 @@ public enum DataFieldType{
 			return DOUBLE;
 		}else if(o instanceof Float){
 			return FLOAT;
-		}else{
+		}else if(o instanceof String){
 			return STRING;
+		}else{
+			return null;
 		}
 	}
 	

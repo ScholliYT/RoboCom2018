@@ -101,7 +101,7 @@ public class MyFileTableModel extends AbstractTableModel{
 		}
 		return value;
 	}
-
+	
 	public boolean isDatafieldNameAvailable(String name){
 		Iterator<TableRowObject> it = content.iterator();
 		while(it.hasNext()){
