@@ -12,7 +12,7 @@ from sys import exit
 import time
 import json
 import os.path
-import bluetooth
+from bluetooth import *
 from pathlib import Path
 
 
@@ -54,6 +54,8 @@ def save_trackbar_values(range_filter):
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video",
     help="path to the (optional) video file")
+ap.add_argument("-a", "--address", default="E8:B1:FC:65:CD:B2",
+    help="bluetooth addr of the NXT")
 ap.add_argument("-b", "--buffer", type=int, default=0,
     help="max buffer size")
 args = vars(ap.parse_args())
@@ -90,12 +92,11 @@ else:
     setup_trackbarsDefault("HSV")
 
 
-nearby_devices = bluetooth.discover_devices(lookup_names=True)
-print("found %d devices" % len(nearby_devices))
-
-for addr, name in nearby_devices:
-    print("  %s - %s" % (addr, name))
-
+socket=BluetoothSocket( RFCOMM )
+socket.connect((args.get("address"), 5))
+socket.send("info")
+data = socket.recv(1024)
+print 'BT-Server:', `data`
 
 # keep looping
 while True:
@@ -200,5 +201,6 @@ while True:
         break
 
 # cleanup the camera and close any open windows
+socket.close();
 camera.release()
 cv2.destroyAllWindows()

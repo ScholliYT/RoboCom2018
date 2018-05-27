@@ -12,13 +12,16 @@ def server( s ) :
 
    while True:
        data = conn.recv(1024)
-       if not data: break
-       conn.send(data)
+       if not data: 
+           break
+       elif(data=="info"):
+       	   conn.send("this is a bluetooth echo server");
+       conn.send(data.upper())
    conn.close()
 
 atexit.register(exit_handler)
 
 socket=BluetoothSocket( RFCOMM )
-socket.bind(('', 4))
+socket.bind(('', 5))
 socket.listen(1)
 server( socket )
