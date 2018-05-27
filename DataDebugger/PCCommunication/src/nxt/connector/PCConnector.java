@@ -86,7 +86,7 @@ public class PCConnector{
 	}
 	
 	private void validateDatafields(Object[] data) throws IllegalArgumentException{
-		if(data.length % 2 != 0) throw new IllegalArgumentException("Die Datafields im PCConnector muessen eine gerade Anzahl haben!");
+		if(data.length % 2 != 0) throw new IllegalArgumentException("Die Datafields im PCConnector muessen eine gerade Anzahl haben! (Ein Datenfeldname und ein Wert)");
 		ArrayList<NxtDataField> list = new ArrayList<>();
 		String currentName = "";
 		for(int i = 0; i < data.length; i++){
@@ -98,20 +98,11 @@ public class PCConnector{
 				}
 			}else{
 				Object field = data[i];
-				DataFieldType type = null;
-				if(field instanceof String){
-					type = DataFieldType.STRING;
-				}else if(field instanceof Integer){
-					type = DataFieldType.INTEGER;
-				}else if(field instanceof Long){
-					type = DataFieldType.LONG;
-				}else if(field instanceof Double){
-					type = DataFieldType.DOUBLE;
-				}else if(field instanceof Float){
-					type = DataFieldType.FLOAT;
-				}else{
-					throw new IllegalArgumentException("Falscher Datenfeldtyp im PCConnector");
+				DataFieldType type = DataFieldType.guessDataFieldTypeFromObject(field);
+				if(type == null){
+					throw new IllegalArgumentException("guessDataFieldTypeFromObject(Object) hat null zurueckgegeben. Das Objekt " + i + " ist ungueltig.");
 				}
+				
 				list.add(new NxtDataField(currentName, type, field));
 				currentName = "";
 			}

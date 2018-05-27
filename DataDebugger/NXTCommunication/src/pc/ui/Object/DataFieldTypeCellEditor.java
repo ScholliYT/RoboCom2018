@@ -46,6 +46,7 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 		}
 		
 		if(currentColumn == 1){
+			model.setValueAt(type, currentRow, 1);
 			ensureValidValueAfterDatatypeChange(currentRow, type);
 		}else if(currentColumn == 0){
 			if(model.isDatafieldNameAvailable((String) value)){
@@ -73,33 +74,42 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 		if(e.getSource() instanceof JComboBox){
 			JComboBox<String> box = (JComboBox<String>) e.getSource();
 			String value = (String) box.getSelectedItem();
-			box.setFocusable(false);
-			switch(value){
-				case "String":
-					this.type = DataFieldType.STRING;
-					break;
-				case "Integer":
-					this.type = DataFieldType.INTEGER;
-					break;
-				case "Long":
-					this.type = DataFieldType.LONG;
-					break;
-				case "Double":
-					this.type = DataFieldType.DOUBLE;
-					break;
-				case "Float":
-					this.type = DataFieldType.FLOAT;
-					break;
-				default:
-					this.type = DataFieldType.STRING;
-					break;
+			if(box.getItemCount() > 2){
+				box.setFocusable(false);
+				switch(value){
+					case "String":
+						this.type = DataFieldType.STRING;
+						break;
+					case "Integer":
+						this.type = DataFieldType.INTEGER;
+						break;
+					case "Long":
+						this.type = DataFieldType.LONG;
+						break;
+					case "Double":
+						this.type = DataFieldType.DOUBLE;
+						break;
+					case "Float":
+						this.type = DataFieldType.FLOAT;
+						break;
+					case "Boolean":
+						this.type = DataFieldType.BOOLEAN;
+						break;
+					default:
+						this.type = DataFieldType.STRING;
+						break;
+				}
+			}else{
+				this.value = Boolean.parseBoolean(value.toLowerCase());
 			}
 		}else if(e.getSource() instanceof JTextField){
 			this.value = ((JTextField) e.getSource()).getText();
 		}else if(e.getSource() instanceof JSpinner){
 			JSpinner spinner = (JSpinner) e.getSource();
 			Number nbr = (Number) spinner.getValue();
-			this.value = "" + nbr;
+			this.value = nbr;
+		}else if(e.getSource() instanceof JCheckBox){
+			this.value = ((JCheckBox) e.getSource()).isSelected();
 		}
 	}
 	
@@ -136,7 +146,7 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 			this.type = (DataFieldType) value;
 		}
 		if(column == 1){
-			JComboBox<String> box = new JComboBox<>(new String[] {"String", "Integer", "Long", "Double", "Float"});
+			JComboBox<String> box = new JComboBox<>(new String[] {"String", "Integer", "Long", "Double", "Float", "Boolean"});
 			
 			if(type != null){
 				switch(type){
@@ -154,6 +164,9 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 						break;
 					case FLOAT:
 						box.setSelectedIndex(4);
+						break;
+					case BOOLEAN:
+						box.setSelectedIndex(5);
 						break;
 				}
 			}
@@ -189,7 +202,13 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 				case DOUBLE:
 					spinner = new JSpinner(new SpinnerNumberModel(parseDouble(value), null, null, 0.1));
 					break;
-				
+				case BOOLEAN:
+					JComboBox<String> box = new JComboBox<>(new String[] {"True", "False"});
+					box.setFocusable(false);
+					box.addActionListener(this);
+					boolean b = Boolean.parseBoolean((model.getValueAt(row, 2) + "").toLowerCase());
+					box.setSelectedIndex(b ? 0 : 1);
+					return box;
 			}
 			spinner.addChangeListener(this);
 			return spinner;
@@ -241,6 +260,7 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 	
 	private void ensureValidValueAfterDatatypeChange(int row, DataFieldType type){
 		Object value = model.getValueAt(row, 2);
+		System.out.println("Alter Wert: " + value);
 		switch(type){
 			case STRING:
 				model.setValueAt(value.toString(), row, 2);
@@ -287,6 +307,17 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 						model.setValueAt(0.0F, row, 2);
 						break;
 					}
+				}
+				break;
+			case BOOLEAN:
+				if(!(value instanceof Boolean)){
+					try{
+						model.setValueAt(Boolean.parseBoolean(value + ""), row, 2);
+					}catch(Exception e){
+						model.setValueAt(true, row, 2);
+					}
+				}else{
+					model.setValueAt((boolean) value, row, 2);
 				}
 				break;
 			default:

@@ -14,7 +14,7 @@ public class Main{
 		PCConnector connector = null;
 		try{
 			connector = new PCConnector(ConnectionType.BLUETOOTH, new byte[] {1, 2, 3, 4}, true, true, "Datenfeldname", "I bims 1 String", "Double", 3.3D,
-					"Long", 19811918184L, "Float", 3.3F, "Integer", 33); //Versuchen, eine Instanz der Klasse PCConnector zu erstellen
+					"Long", 19811918184L, "Float", 3.3F, "Integer", 33, "Boolean", true); //Versuchen, eine Instanz der Klasse PCConnector zu erstellen
 		}catch(IllegalArgumentException iae){ //Das Object[] enthält einen Syntaxfehler
 			System.out.println(iae.getMessage()); //Den Fehler ausgeben
 			while(!Button.RIGHT.isDown()); //Auf Bestätigung des Nutzers warten
