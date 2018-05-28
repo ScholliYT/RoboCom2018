@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import lejos.util.Delay;
 import pc.connection.NXTCommunication;
 import pc.object.DataFieldType;
-import pc.ui.ExceptionReporter;
 import pc.ui.LoadNxtSettingsDialog;
 import pc.ui.NXTCommunicationFrame;
 import pc.ui.Object.MyFileTableModel;
@@ -41,7 +40,7 @@ public class NxtToPcInputStreamManager extends Thread{
 					if(buffer.charAt(buffer.length() - 1) == '\n'){
 						if(buffer.startsWith(" ")){
 							buffer = "";
-							Delay.msDelay(10);
+							Delay.msDelay(10); //Default: 10
 							continue;
 						}else if(buffer.startsWith("df!")){
 							buffer = buffer.substring(3, buffer.length()-1);
@@ -102,17 +101,12 @@ public class NxtToPcInputStreamManager extends Thread{
 						}
 						break;
 					}
-//					Delay.msDelay(50);
 				}
-				Delay.msDelay(50);
+				Delay.msDelay(10);
 			}catch(IOException e){
 				com.close(true);
 			}
-			try{
-				Thread.sleep(10);
-			}catch(InterruptedException e){
-				ExceptionReporter.showDialog(frame, e);
-			}
+			Delay.msDelay(10);
 		}
 		try{
 			input.close();

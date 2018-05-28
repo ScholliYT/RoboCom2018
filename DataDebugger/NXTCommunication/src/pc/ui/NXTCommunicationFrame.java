@@ -506,7 +506,13 @@ public class NXTCommunicationFrame extends JFrame{
 				model.deleteRow(selected[i]);
 			}
 			table.getSelectionModel().clearSelection();
-			showWarning();
+			
+			if(settings.getUploadChangesAutomatically()){
+				uploadCurrentDatafields();
+			}else{
+				showWarning();
+			}
+			
 			table.updateUI();
 		}
 	}

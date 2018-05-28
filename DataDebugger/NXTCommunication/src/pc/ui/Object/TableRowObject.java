@@ -13,25 +13,7 @@ public class TableRowObject{
 		this.type = type;
 		
 		try{
-			switch(type){
-				case STRING:
-					this.value = value;
-					break;
-				case INTEGER:
-					this.value = Integer.parseInt((String) value);
-					break;
-				case LONG:
-					this.value = Long.parseLong((String) value);
-					break;
-				case DOUBLE:
-					this.value = Double.parseDouble((String) value);
-					break;
-				case FLOAT:
-					this.value = Float.parseFloat((String) value);
-					break;
-				default:
-					this.value = "";
-			}
+			setValidValue(value);
 		}catch(NumberFormatException e){
 			this.value = 0;
 		}
@@ -59,25 +41,7 @@ public class TableRowObject{
 	
 	public void setValue(Object newValue){
 		try{
-			switch(type){
-				case STRING:
-					this.value = newValue;
-					break;
-				case INTEGER:
-					this.value = Integer.parseInt(newValue + "");
-					break;
-				case LONG:
-					this.value = Long.parseLong(newValue + "");
-					break;
-				case DOUBLE:
-					this.value = Double.parseDouble(newValue + "");
-					break;
-				case FLOAT:
-					this.value = Float.parseFloat(newValue + "");
-					break;
-				default:
-					this.value = 0;
-			}
+			setValidValue(newValue);
 		}catch(NumberFormatException e){
 			this.value = 0;
 		}
@@ -86,6 +50,36 @@ public class TableRowObject{
 	@Override
 	public String toString(){
 		return fieldName + ":" + type.toString() +":" + value + ";";
+	}
+	
+	private void setValidValue(Object value){
+		try{
+			switch(type){
+				case STRING:
+					this.value = value + "";
+					break;
+				case INTEGER:
+					Integer.parseInt(value + "");
+					this.value = value;
+					break;
+				case LONG:
+					Long.parseLong(value + "");
+					this.value = value;
+					break;
+				case DOUBLE:
+					Double.parseDouble(value + "");
+					this.value = value;
+					break;
+				case FLOAT:
+					Float.parseFloat(value + "");
+					this.value = value;
+					break;
+				default:
+					this.value = 0;
+			}
+		}catch(NumberFormatException nfe){
+			this.value = 0;
+		}
 	}
 	
 }
