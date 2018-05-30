@@ -75,7 +75,7 @@ public class MyFileTableModel extends AbstractTableModel{
 		return content.size();
 	}
 	
-	public void addRow(String fieldName, DataFieldType type, String value){
+	public void addRow(String fieldName, DataFieldType type, Object value){
 		this.content.add(new TableRowObject(fieldName, type, value));
 	}
 	
@@ -101,7 +101,7 @@ public class MyFileTableModel extends AbstractTableModel{
 		}
 		return value;
 	}
-
+	
 	public boolean isDatafieldNameAvailable(String name){
 		Iterator<TableRowObject> it = content.iterator();
 		while(it.hasNext()){

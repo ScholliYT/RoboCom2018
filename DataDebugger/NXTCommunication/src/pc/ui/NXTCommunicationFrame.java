@@ -407,15 +407,13 @@ public class NXTCommunicationFrame extends JFrame{
 				ExceptionReporter.showDialog(this, e);
 			}
 		}
-		
-//		pack();
 	}
 	
 	public boolean isDatafieldNameAvailable(String name){
 		return model.isDatafieldNameAvailable(name);
 	}
 	
-	public void addNewRow(String fieldName, DataFieldType type, String value){
+	public void addNewRow(String fieldName, DataFieldType type, Object value){
 		model.addRow(fieldName, type, value);
 		table.updateUI();
 	}
@@ -506,7 +504,13 @@ public class NXTCommunicationFrame extends JFrame{
 				model.deleteRow(selected[i]);
 			}
 			table.getSelectionModel().clearSelection();
-			showWarning();
+			
+			if(settings.getUploadChangesAutomatically()){
+				uploadCurrentDatafields();
+			}else{
+				showWarning();
+			}
+			
 			table.updateUI();
 		}
 	}

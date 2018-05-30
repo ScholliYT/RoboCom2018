@@ -33,6 +33,7 @@ public class NewRowDialog extends JDialog{
 	
 	private boolean editMode;
 	private int row;
+	private JComboBox<String> cbBooleans;
 	
 	public NewRowDialog(NXTCommunicationFrame parent){
 		this.row = -1;
@@ -64,12 +65,26 @@ public class NewRowDialog extends JDialog{
 						return;
 					}
 					parent.getModel().setValueAt(type, row, 1);
-					parent.getModel().setValueAt((type == DataFieldType.STRING ? tfValue.getText() : ((Number) spinner.getValue()) + ""), row, 2);
+					
+					if(type == DataFieldType.STRING){
+						parent.getModel().setValueAt(tfValue.getText(), row, 2);
+					}else if(type == DataFieldType.BOOLEAN){
+						parent.getModel().setValueAt(cbBooleans.getSelectedIndex() == 0 ? true : false, row, 2);
+					}else{
+						parent.getModel().setValueAt((Number) spinner.getValue(), row, 2);
+					}
+					
 					parent.getTable().updateUI();
 					parent.showWarning();
 					setVisible(false);
 				}else if(parent.isDatafieldNameAvailable(tfDatafieldName.getText())){
-					parent.addNewRow(tfDatafieldName.getText(), type, (type == DataFieldType.STRING ? tfValue.getText() : ((Number) spinner.getValue()) + ""));
+					if(type == DataFieldType.STRING){
+						parent.addNewRow(tfDatafieldName.getText(), type, tfValue.getText());
+					}else if(type == DataFieldType.BOOLEAN){
+						parent.addNewRow(tfDatafieldName.getText(), type, Boolean.parseBoolean((String) cbBooleans.getSelectedItem()));
+					}else{
+						parent.addNewRow(tfDatafieldName.getText(), type, (Number) spinner.getValue());
+					}
 					parent.showWarning();
 					setVisible(false);
 				}
@@ -119,32 +134,41 @@ public class NewRowDialog extends JDialog{
 					tfValue.setVisible(false);
 					spinner.setModel(modelDouble);
 					spinner.setVisible(true);
+					cbBooleans.setVisible(false);
 					break;
 				case FLOAT:
 					tfValue.setVisible(false);
 					spinner.setModel(modelFloat);
 					spinner.setVisible(true);
+					cbBooleans.setVisible(false);
 					break;
 				case INTEGER:
 					tfValue.setVisible(false);
 					spinner.setModel(modelInteger);
 					spinner.setVisible(true);
+					cbBooleans.setVisible(false);
 					break;
 				case LONG:
 					tfValue.setVisible(false);
 					spinner.setModel(modelLong);
 					spinner.setVisible(true);
+					cbBooleans.setVisible(false);
 					break;
 				case STRING:
 					spinner.setVisible(false);
 					tfValue.setVisible(true);
+					cbBooleans.setVisible(false);
 					break;
+				case BOOLEAN:
+					spinner.setVisible(false);
+					tfValue.setVisible(false);
+					cbBooleans.setVisible(true);
 				default:
 					break;
 				}
 			}
 		});
-		cbDataType.setModel(new DefaultComboBoxModel<>(new String[] {"String", "Integer", "Long", "Double", "Float"}));
+		cbDataType.setModel(new DefaultComboBoxModel<>(new String[] {"String", "Integer", "Long", "Double", "Float", "Boolean"}));
 		cbDataType.setFocusable(false);
 		cbDataType.setBounds(132, 33, 232, 20);
 		getContentPane().add(cbDataType);
@@ -163,12 +187,16 @@ public class NewRowDialog extends JDialog{
 		spinner.setBounds(132, 58, 232, 20);
 		getContentPane().add(spinner);
 		
+		cbBooleans = new JComboBox<>();
+		cbBooleans.setFocusable(false);
+		cbBooleans.setModel(new DefaultComboBoxModel<>(new String[] {"True", "False"}));
+		cbBooleans.setBounds(132, 58, 232, 20);
+		getContentPane().add(cbBooleans);
+		
 		this.modelInteger = new SpinnerNumberModel(new Integer(0), null, null, 1);
 		this.modelLong = new SpinnerNumberModel(new Long(0L), null, null, 1);
 		this.modelDouble = new SpinnerNumberModel(new Double(0.0D), null, null, 0.1);
 		this.modelFloat = new SpinnerNumberModel(new Float(0.0F), null, null, 0.1F);
-		
-//		pack();
 		
 	}
 	
@@ -183,10 +211,11 @@ public class NewRowDialog extends JDialog{
 		
 		int index = 0;
 		boolean isString = (type == DataFieldType.STRING);
+		boolean isBoolean = (type == DataFieldType.BOOLEAN);
+		SINGLETONE.spinner.setVisible(!isString && !isBoolean);
+		SINGLETONE.tfValue.setVisible(isString && !isBoolean);
+		SINGLETONE.cbBooleans.setVisible(isBoolean && !isString);
 		
-		SINGLETONE.spinner.setVisible(!isString);
-		SINGLETONE.tfValue.setVisible(isString);
-//		Number nbrValue = 0;
 		switch(type){
 			case STRING:
 				SINGLETONE.tfValue.setText((String) value);
@@ -194,29 +223,27 @@ public class NewRowDialog extends JDialog{
 			case INTEGER:
 				index = 1;
 				SINGLETONE.spinner.setModel(SINGLETONE.modelInteger);
-//				nbrValue = Integer.parseInt((String) value);
 				break;
 			case LONG:
 				index = 2;
 				SINGLETONE.spinner.setModel(SINGLETONE.modelLong);
-//				nbrValue = Long.parseLong((String) value);
 				break;
 			case DOUBLE:
 				index = 3;
 				SINGLETONE.spinner.setModel(SINGLETONE.modelDouble);
-//				nbrValue = Double.parseDouble((String) value);
 				break;
 			case FLOAT:
 				index = 4;
 				SINGLETONE.spinner.setModel(SINGLETONE.modelFloat);
-//				nbrValue = Float.parseFloat((String) value);
 				break;
+			case BOOLEAN:
+				index = 5;
+				SINGLETONE.cbBooleans.setSelectedIndex(Boolean.parseBoolean(value + "") ? 0 : 1);
 			default:
 				break;
 		}
 		
-		if(!isString){
-			System.out.println(isString + " : " + (type == DataFieldType.STRING) +" class: " + value.getClass().getName());
+		if(!isString && !isBoolean){
 			SINGLETONE.spinner.setValue(value);
 		}
 		
@@ -234,5 +261,4 @@ public class NewRowDialog extends JDialog{
 		SINGLETONE.setLocationRelativeTo(parent);
 		SINGLETONE.setVisible(true);
 	}
-	
 }

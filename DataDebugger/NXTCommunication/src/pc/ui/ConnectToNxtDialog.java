@@ -45,6 +45,7 @@ public class ConnectToNxtDialog extends JFrame{
 	private boolean bluetoothEnabled;
 	
 	public ConnectToNxtDialog(NXTCommunicationFrame parent){
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(ConnectToNxtDialog.class.getResource("/resources/icon_frame_128x200px.jpg")));
 		this.settings = SettingsManager.getSingletone();
 		addWindowListener(new WindowAdapter(){
@@ -182,8 +183,6 @@ public class ConnectToNxtDialog extends JFrame{
 		
 		this.setLocationRelativeTo(parent);
 		reloadRecentNXTData();
-		
-//		pack();
 		
 	}
 	

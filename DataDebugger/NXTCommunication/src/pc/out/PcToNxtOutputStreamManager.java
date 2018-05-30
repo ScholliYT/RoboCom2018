@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import lejos.util.Delay;
 import pc.connection.NXTCommunication;
 
 public class PcToNxtOutputStreamManager extends Thread{
@@ -40,12 +41,8 @@ public class PcToNxtOutputStreamManager extends Thread{
 				}catch(Exception e){
 					com.close(true);
 				}
-				try{
-					Thread.sleep(100);
-				}catch(InterruptedException e){
-					e.printStackTrace();
-				}
 			}
+			Delay.msDelay(25);
 		}
 		try{
 			out.write("shutdown");
