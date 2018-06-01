@@ -146,7 +146,8 @@ while True:
 
             radiuses.appendleft(radius)
             radiusAvg = np.mean(radiuses)
-            cv2.putText(frame,"Radius: {:0.4f}".format(radiusAvg), (X_TEXT,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255) #Draw frameTimeAVG text
+            cv2.putText(frame,"Radius: {:0.4f}".format(radiusAvg), (X_TEXT,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255) #Draw radius text
+            cv2.putText(frame,"Position: {:0.2f}, {:0.2f}".format(x, y), (X_TEXT,40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255) #Draw center positon text
 
     # update the points queue
     pts.appendleft(center)
@@ -167,8 +168,8 @@ while True:
     frameTimes.appendleft(frameTime)
 
     frameTiemAvg = np.mean(frameTimes)
-    cv2.putText(frame,"FrameTime: {:0.4f} ms".format(frameTiemAvg), (X_TEXT,40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255) #Draw frameTimeAVG text
-    cv2.putText(frame,"FPS: {:0.2f}".format(1/frameTiemAvg), (X_TEXT,60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255) #Draw FPS text
+    cv2.putText(frame,"FrameTime: {:0.4f} ms".format(frameTiemAvg), (X_TEXT,60), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255) #Draw frameTimeAVG text
+    cv2.putText(frame,"FPS: {:0.2f}".format(1/frameTiemAvg), (X_TEXT,80), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255) #Draw FPS text
 
 
 
