@@ -90,8 +90,6 @@ public class ExceptionReporter extends JDialog{
 		tfException.setBackground(SystemColor.menu);
 		tfException.setHighlighter(null);
 		
-//		pack();
-		
 	}
 	
 	private void displayException(Exception ex){

@@ -6,7 +6,8 @@ public enum DataFieldType{
 	INTEGER,
 	LONG,
 	DOUBLE,
-	FLOAT;
+	FLOAT,
+	BOOLEAN;
 	
 	public static DataFieldType getDataFieldTypeFromString(String type){
 		switch(type.trim().toLowerCase()){
@@ -20,6 +21,8 @@ public enum DataFieldType{
 				return DataFieldType.DOUBLE;
 			case "float":
 				return DataFieldType.FLOAT;
+			case "boolean":
+				return DataFieldType.BOOLEAN;
 			default:
 				return DataFieldType.STRING;
 		}
@@ -37,6 +40,8 @@ public enum DataFieldType{
 				return Double.parseDouble(str);
 			case FLOAT:
 				return Float.parseFloat(str);
+			case BOOLEAN:
+				return Boolean.parseBoolean(str.toLowerCase());
 			default:
 				return str;
 		}
@@ -51,8 +56,12 @@ public enum DataFieldType{
 			return DOUBLE;
 		}else if(o instanceof Float){
 			return FLOAT;
-		}else{
+		}else if(o instanceof String){
 			return STRING;
+		}else if(o instanceof Boolean){
+			return BOOLEAN;
+		}else{
+			return null;
 		}
 	}
 	
