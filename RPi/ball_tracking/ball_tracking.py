@@ -8,11 +8,32 @@ import numpy as np
 import argparse
 import imutils
 import cv2
+import serial
 import time
 import json
 import os.path
 from pathlib import Path
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+current_milli_time = lambda: int(round(time.time() * 1000))
 
+def sendData(posx, posy):
+    if(posx < 0 or posx > 65535):
+        print(bcolors.WARNING + "PosX is not in bounds of [0|65535]!" + bcolors.ENDC)
+        return
+    elif(posy < 0 or posy > 65535):
+        print(bcolors.WARNING + "PosX is not in bounds of [0|65535]!" + bcolors.ENDC)
+        return
+    response = "<" + str(posx) + "," + str(posy) + ">"
+    print(bcolors.OKGREEN + "Response: " + bcolors.ENDC + response)
+    ser.write(response)   
 
 def callback(value):
     pass
@@ -63,6 +84,8 @@ X_TEXT = 10 #position of text
 # list of tracked points
 pts = deque(maxlen=args["buffer"])
 radiuses = deque(maxlen=5) # collection to calcualte avg of last x radiuses
+posx = deque(maxlen=5)
+posy = deque(maxlen=5)
 frameTimes = deque(maxlen=10) # collection to calcualte avg of last x frameTimes
 
 # if a video path was not supplied, grab the reference
@@ -84,6 +107,9 @@ if(os.path.isfile(config)):
     setup_trackbars("HSV")
 else:
     setup_trackbarsDefault("HSV")
+
+ser = serial.Serial("/dev/ttyUSB0", 9600)
+stopwatch = current_milli_time()
 # keep looping
 while True:
     startTime = time.time()
@@ -144,10 +170,15 @@ while True:
                 (30,128,255), 2)
             cv2.circle(dilateMask, center, 5, (180, 255, 50), -1)
 
+            posx.appendleft(x)
+            posxAvg = np.mean(posx)    
+            posy.appendleft(y)
+            posyAvg = np.mean(posy)    
+
             radiuses.appendleft(radius)
             radiusAvg = np.mean(radiuses)
             cv2.putText(frame,"Radius: {:0.4f}".format(radiusAvg), (X_TEXT,20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255) #Draw radius text
-            cv2.putText(frame,"Position: {:0.2f}, {:0.2f}".format(x, y), (X_TEXT,40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255) #Draw center positon text
+            cv2.putText(frame,"Position: {:0.2f}, {:0.2f}".format(posxAvg, posyAvg), (X_TEXT,40), cv2.FONT_HERSHEY_SIMPLEX, 0.5, 255) #Draw center positon text
 
     # update the points queue
     pts.appendleft(center)
@@ -174,11 +205,23 @@ while True:
 
 
     # show the frame to our screen
-    cv2.imshow("Frame", frame)
-    cv2.imshow("InRange", inRangeMask)
-    cv2.imshow("Erode", erodeMask)
-    cv2.imshow("Dilate", dilateMask)
+    cv2.imshow("Recording", frame)
+    cv2.imshow("InRange#1", inRangeMask)
+    cv2.imshow("Erode#2", erodeMask)
+    cv2.imshow("Dilate#3", dilateMask)
     
+    # ================ I2C Start ===================
+    if(ser.in_waiting):
+        cmd = ser.readline()
+        print("PassedTime: " + str(current_milli_time() - stopwatch))
+        stopwatch = current_milli_time();
+        print("Command: " + cmd)
+        if(cmd == "Request\r\n"):
+            print(bcolors.OKGREEN + "Got Request from arduino" + bcolors.ENDC)
+            sendData(posxAvg, posyAvg)
+        else:
+            print(bcolors.WARNING + "Something else arrived!" + bcolors.ENDC)
+    # ================ I2C End ===================
 
     key = cv2.waitKey(1) & 0xFF
 
@@ -189,4 +232,5 @@ while True:
 
 # cleanup the camera and close any open windows
 camera.release()
+ser.close()
 cv2.destroyAllWindows()
