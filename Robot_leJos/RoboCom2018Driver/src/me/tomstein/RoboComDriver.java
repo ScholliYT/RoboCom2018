@@ -43,8 +43,8 @@ public class RoboComDriver{
 	
 	public static void main(String[] args){
 		PCCommunicationManager man;
-		if (DEBUG_ENABLED){
-			PCConnector connector = new PCConnector(ConnectionType.BLUETOOTH, false, true, "speed", 200, "kp", 1.6F, "ki", 0.0F, "kd", 0.0F);
+		if(DEBUG_ENABLED){
+			PCConnector connector = new PCConnector(ConnectionType.BLUETOOTH, true, true, "speed", 200, "kp", 1.6F, "ki", 0.0F, "kd", 0.0F);
 			man = connector.attemptConnection();
 			if(man == null) return;
 			man.redirectSystemOutputToConnectedPC();
@@ -137,19 +137,20 @@ public class RoboComDriver{
 	}
 
 	private boolean ballIsInRange(){
-		return ultrasonicSensor.getDistance() <= STOP_DISTANCE;
+//		return ultrasonicSensor.getDistance() <= STOP_DISTANCE;
+		return false;
 	}
 	
 	public void calibrateLightSensor(int measurements){
-		ArrayList<Integer> weiﬂ = new ArrayList<>();
+		ArrayList<Integer> weis = new ArrayList<>();
 		ArrayList<Integer> schwarz = new ArrayList<>();
 		
 		for(int i = 1; i <= measurements; i++){
 			Delay.msDelay(500);
 			System.out.println("Bitte auf WEISZ stellen!!");
 			while (!Button.ENTER.isDown());
-			weiﬂ.add(lightsensor.getNormalizedLightValue());
-			System.out.println("Weiss: " + weiﬂ.get(i - 1));
+			weis.add(lightsensor.getNormalizedLightValue());
+			System.out.println("Weiss: " + weis.get(i - 1));
 		}
 		for(int i = 1; i <= measurements; i++){
 			Delay.msDelay(500);
@@ -158,11 +159,11 @@ public class RoboComDriver{
 			schwarz.add(lightsensor.getNormalizedLightValue());
 			System.out.println("Schwarz: " + schwarz.get(i - 1));
 		}
-		int mitteweiﬂ = 0;
-		for (int x : weiﬂ){
-			mitteweiﬂ += x;
+		int mitteweis = 0;
+		for (int x : weis){
+			mitteweis += x;
 		}
-		lightsensor.setHigh(mitteweiﬂ / measurements);
+		lightsensor.setHigh(mitteweis / measurements);
 
 		int mitteschwarz = 0;
 		for(int x : schwarz){
@@ -172,7 +173,7 @@ public class RoboComDriver{
 	}
 	
 	private void lineFollower(){
-		calibrateLightSensor(1);
+		calibrateLightSensor(3);
 		motorR.forward();
 		motorL.forward();
 		int target = 50;
@@ -180,11 +181,14 @@ public class RoboComDriver{
 		int integral = 0;
 		int derivative = 0;
 		int lasterror = 0;
-		
+		long time;
+		int count = 0;
 		while(!ballIsInRange()){ // Solange ausf√ºhren, bis der der Ball gefunden ist
+			time = System.currentTimeMillis();
 			int readValue = lightsensor.readValue(); // Atuellen Wert des Lichtsensors einlesen
 			
 			int error = target - readValue; // Differenz zur Kante berrechnen
+			
 			if(error == 0){ // Auf der Kante
 				integral = 0; // Integral zur√ºcksetzen
 			}
@@ -203,6 +207,15 @@ public class RoboComDriver{
 			lasterror = error;
 			
 			updateDatafields();
+			if(++count % 10 == 0){
+				count = 0;
+				System.out.println("Error: " + error + "; integral: " + integral + "; derivative: " + derivative
+						+ "; lasterror: " + lasterror);
+				System.out.println("Durchlauf: " + (System.currentTimeMillis() - time) + "ms.");
+			}
+			try {
+				Delay.msDelay(50 - (System.currentTimeMillis() - time));
+			}catch(Exception e) {}
 		}
 		motorL.stop();
 		motorR.stop();
