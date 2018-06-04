@@ -53,6 +53,7 @@ import java.awt.event.WindowEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import java.awt.event.MouseMotionAdapter;
 
 public class NXTCommunicationFrame extends JFrame{
 	
@@ -78,6 +79,7 @@ public class NXTCommunicationFrame extends JFrame{
 	private JLabel lblWarning;
 	private JPanel panelDataFields;
 	private JPanel panelNxtInput;
+	private MyTableCellRenderer renderer;
 	
 	public NXTCommunicationFrame(){
 		this.disposing = false;
@@ -318,6 +320,17 @@ public class NXTCommunicationFrame extends JFrame{
 		panelDataFields.add(scrollPane);
 		
 		table = new JTable();
+		table.addMouseMotionListener(new MouseMotionAdapter(){
+			@Override
+			public void mouseMoved(MouseEvent me){
+				int row = table.rowAtPoint(me.getPoint());
+				if(row != renderer.getCurrentHover()){
+					System.out.println("ROW: " + row);
+					renderer.setCurrentHover(row);
+					table.updateUI();
+				}
+			}
+		});
 		table.setToolTipText("Alle Datenfelder werden hier aufgelistet");
 		table.addMouseListener(new MouseAdapter(){
 			@Override
@@ -348,7 +361,8 @@ public class NXTCommunicationFrame extends JFrame{
 		model = new MyFileTableModel(this);
 		table.setModel(model);
 		table.setDefaultEditor(Object.class, new DataFieldTypeCellEditor(this, model));
-		table.setDefaultRenderer(Object.class, new MyTableCellRenderer(model));
+		renderer = new MyTableCellRenderer(model);
+		table.setDefaultRenderer(Object.class, renderer);
 		table.getColumnModel().getColumn(0).setPreferredWidth(106);
 		table.getColumnModel().getColumn(1).setPreferredWidth(113);
 		table.getColumnModel().getColumn(2).setPreferredWidth(180);

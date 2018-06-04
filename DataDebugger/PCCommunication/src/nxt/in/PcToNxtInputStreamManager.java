@@ -9,11 +9,11 @@ import nxt.connection.PCCommunicationManager;
 public class PcToNxtInputStreamManager extends Thread{
 	
 	private PCCommunicationManager parent;
-	private PcToNxtInputStream in;
+	private PCToNXTInputStream in;
 	
 	public PcToNxtInputStreamManager(PCCommunicationManager parent, InputStream in){
 		this.parent = parent;
-		this.in = new PcToNxtInputStream(in);
+		this.in = new PCToNXTInputStream(in);
 		this.setDaemon(true);
 		super.start();
 	}
