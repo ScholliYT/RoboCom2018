@@ -14,16 +14,19 @@ public class MyTableCellRenderer extends DefaultTableCellRenderer{
 	private static final long serialVersionUID = 7600394344309140741L;
 	
 //	private JComboBox<String> comboBox;
-	private Color defaultSelectionForeground, defaultSelectionBackground, myLightGray, myDarkGreen;
+	private Color defaultSelectionForeground, defaultSelectionBackground, myLightGray, myDarkGreen, myHoverColor;
 	private MyFileTableModel model;
+	private int currentHover;
 	
 	public MyTableCellRenderer(MyFileTableModel model){
 		UIDefaults defaults = UIManager.getDefaults();
 		this.myLightGray = new Color(235, 235, 235);
 		this.myDarkGreen = new Color(0, 128, 0);
+		this.myHoverColor = new Color(135, 206, 250, 75);
 		defaultSelectionForeground = defaults.getColor("List.selectionForeground");
 		defaultSelectionBackground = defaults.getColor("List.selectionBackground");
 		this.model = model;
+		this.currentHover = -1;
 	}
 	
 	@Override
@@ -37,6 +40,10 @@ public class MyTableCellRenderer extends DefaultTableCellRenderer{
 		}else{
 			setForeground(Color.BLACK);
 			setBackground(myLightGray);
+		}
+		
+		if(row == currentHover && !isSelected){
+			setBackground(myHoverColor);
 		}
 		
 		if(column == 1){ //Combobox
@@ -79,6 +86,14 @@ public class MyTableCellRenderer extends DefaultTableCellRenderer{
 			}
 		}
 		return this;
+	}
+	
+	public void setCurrentHover(int hover){
+		this.currentHover = hover;
+	}
+	
+	public int getCurrentHover(){
+		return currentHover;
 	}
 	
 }

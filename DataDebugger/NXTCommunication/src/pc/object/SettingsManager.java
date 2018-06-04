@@ -39,6 +39,8 @@ public class SettingsManager{
 	public final String AUTOSCROLL_ACTIVE_KEY = "nxt.autoscrollActive";
 	
 	public final String RECENT_NXTS_CACHE_KEY = "cache.recentNxts";
+	public final String MOST_RECENT_NXT_KEY = "cache.recentConnectedNxt";
+	public final String MOST_RECENT_CONNECTION_KEY = "cache.recentConnectionUsed";
 	
 	public final String RECENT_EXCEPTION_PARSING_DATA = "cache.recentNxtParsingData";
 	public final String EXCEPTIONPARSING_ENABLED = "exceptions.parsingEnabled";
@@ -93,6 +95,8 @@ public class SettingsManager{
 		}catch(Exception e){
 			ExceptionReporter.showDialog(null, e);
 		}
+		ensureEntryExists(MOST_RECENT_CONNECTION_KEY, "usb");
+		ensureEntryExists(MOST_RECENT_NXT_KEY, "");
 	}
 	
 	public void reload(){
@@ -200,6 +204,23 @@ public class SettingsManager{
 	public String getRecentExceptionParsingData(){
 		ensureEntryExists(RECENT_EXCEPTION_PARSING_DATA, "");
 		return currentSettings.get(RECENT_EXCEPTION_PARSING_DATA);
+	}
+	
+	public String getMostRecentNxtName(){
+		ensureEntryExists(MOST_RECENT_NXT_KEY, "");
+		return currentSettings.get(MOST_RECENT_NXT_KEY);
+	}
+	
+	public ConnectionType getMostRecentConnection(){
+		ensureEntryExists(MOST_RECENT_CONNECTION_KEY, "usb");
+		if(!currentSettings.get(MOST_RECENT_CONNECTION_KEY).isEmpty()){
+			if(currentSettings.get(MOST_RECENT_CONNECTION_KEY).equalsIgnoreCase("usb")){
+				return ConnectionType.USB;
+			}else{
+				return ConnectionType.BLUETOOTH;
+			}
+		}
+		return ConnectionType.USB;
 	}
 	
 	public NXTInfo[] getRecentNXTInfo(ConnectionType connectionType){

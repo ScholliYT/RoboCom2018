@@ -63,8 +63,6 @@ public class ConnectToNxtDialog extends JFrame{
 		this.connector = null;
 		setTitle("Mit NXT verbinden");
 		setResizable(false);
-//		setModalityType(ModalityType.APPLICATION_MODAL);
-//		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		setBounds(100, 100, 450, 227);
 		getContentPane().setLayout(null);
 		
@@ -149,7 +147,7 @@ public class ConnectToNxtDialog extends JFrame{
 		}catch(BluetoothStateException e1){
 			this.bluetoothEnabled = false;
 			rdbtnBluetoothConnection.setEnabled(bluetoothEnabled);
-			rdbtnBluetoothConnection.setToolTipText("Das lokale Bluetoothgerät konnte nicht gefunden werden.");
+			rdbtnBluetoothConnection.setToolTipText("Das lokale Bluetoothgerï¿½t konnte nicht gefunden werden.");
 		}
 		
 		ButtonGroup bg = new ButtonGroup();
@@ -182,12 +180,36 @@ public class ConnectToNxtDialog extends JFrame{
 		panel.add(cbNxtName);
 		
 		this.setLocationRelativeTo(parent);
+		
+		ConnectionType mostRecentConnection = settings.getMostRecentConnection();
+		if(mostRecentConnection != null){
+			if(mostRecentConnection == ConnectionType.USB){
+				rdbtnBluetoothConnection.setSelected(false);
+				rdbtnUsbConnection.setSelected(true);
+			}else{
+				rdbtnUsbConnection.setSelected(false);
+				rdbtnBluetoothConnection.setSelected(true);
+			}
+		}
+		
 		reloadRecentNXTData();
+		
+		String recentNxt = settings.getMostRecentNxtName();
+		if(recentNxt != null && !recentNxt.isEmpty()){
+			for(int i = 0; i < cbNxtName.getItemCount(); i++){
+				if(cbNxtName.getItemAt(i).equals(recentNxt)){
+					cbNxtName.setSelectedIndex(i);
+					break;
+				}
+			}
+		}
 		
 	}
 	
 	public void onSuccess(NXTComm connection){
 		this.setVisible(false);
+		settings.put(settings.MOST_RECENT_CONNECTION_KEY, (rdbtnUsbConnection.isSelected() ? "usb" : "bluetooth"));
+		settings.put(settings.MOST_RECENT_NXT_KEY, cbNxtName.getSelectedItem().toString());
 		parent.init(connection.getInputStream(), connection.getOutputStream());
 	}
 	
