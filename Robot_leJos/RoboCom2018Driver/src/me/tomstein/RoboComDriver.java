@@ -18,8 +18,8 @@ import java.util.*;
 
 public class RoboComDriver{
 	
-	private NXTRegulatedMotor motorL, motorR;
-	private ColorSensor lightsensor;
+	private GoodMotor motorL, motorR;
+	private SuperColorSensor lightsensor;
 	private UltrasonicSensor ultrasonicSensor;
 	
 	private NXTConnection connectionToNXT_ARM;
@@ -56,9 +56,10 @@ public class RoboComDriver{
 	public RoboComDriver(PCCommunicationManager man){
 		this.man = man;
 		LCD.clear();
-		motorL = new NXTRegulatedMotor(MotorPort.C);
-		motorR = new NXTRegulatedMotor(MotorPort.B);
-		lightsensor = new ColorSensor(SensorPort.S3);
+		motorL = new GoodMotor(MotorPort.C);
+		motorR = new GoodMotor(MotorPort.B);
+		
+		lightsensor = new SuperColorSensor();
 		lightsensor.setFloodlight(true);
 		ultrasonicSensor = new UltrasonicSensor(SensorPort.S2);
 		
@@ -148,7 +149,7 @@ public class RoboComDriver{
 		
 		for(int i = 1; i <= measurements; i++){
 			Delay.msDelay(500);
-			System.out.println("Bitte auf WEISZ stellen!!");
+			System.out.println("Bitte auf WEISS stellen!!");
 			while (!Button.ENTER.isDown());
 			weis.add(lightsensor.getNormalizedLightValue());
 			System.out.println("Weiss: " + weis.get(i - 1));
@@ -204,8 +205,8 @@ public class RoboComDriver{
 			
 			int turn = (int) (kp * error + ki * integral + kd * derivative);
 			// System.out.println(turn);
-			motorR.setSpeed((int) (speed - turn*1.1));
-			motorL.setSpeed(speed + turn);
+			motorR.setPower(speed - turn);
+			motorL.setPower(speed + turn);
 			
 			
 			// System.out.println((speed-turn) + ":" + (speed+turn));
@@ -214,7 +215,7 @@ public class RoboComDriver{
 			updateDatafields();
 			if(++count % 5 == 0){
 				count = 0;
-				System.out.println("Error: " + error + " Right: " + (speed - turn) + " Left: " + (speed + turn));
+				System.out.println("ReadValue: " + readValue + " Error: " + error + " Right: " + (motorR.getPower()) + " Left: " + (motorL.getPower()));
 				/*
 				System.out.println("Measuered: " + readValue);
 				System.out.println("Error: " + error + "; integral: " + integral + "; derivative: " + derivative

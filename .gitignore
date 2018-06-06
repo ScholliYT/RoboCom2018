@@ -21,3 +21,11 @@ hs_err_pid*
 #lejos
 *.nxd
 *.nxj
+
+DataDebugger/NXTCommunication/bin/
+
+DataDebugger/PCCommunication/bin/
+
+Robot_leJos/RoboCom2018Driver/bin/
+
+Robot_leJos/RoboCom2018Arm/bin/
