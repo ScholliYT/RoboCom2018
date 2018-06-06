@@ -15,9 +15,9 @@ public class Main{
 		try{
 			connector = new PCConnector(ConnectionType.BLUETOOTH, new byte[] {1, 2, 3, 4}, true, true, "Datenfeldname", "I bims 1 String", "Double", 3.3D,
 					"Long", 19811918184L, "Float", 3.3F, "Integer", 33, "Boolean", true); //Versuchen, eine Instanz der Klasse PCConnector zu erstellen
-		}catch(IllegalArgumentException iae){ //Das Object[] enthält einen Syntaxfehler
+		}catch(IllegalArgumentException iae){ //Das Object[] enthÃ¤lt einen Syntaxfehler
 			System.out.println(iae.getMessage()); //Den Fehler ausgeben
-			while(!Button.RIGHT.isDown()); //Auf Bestätigung des Nutzers warten
+			while(!Button.RIGHT.isDown()); //Auf BestÃ¤tigung des Nutzers warten
 			System.exit(0); //Beenden
 		}
 		PCCommunicationManager man = null;
@@ -27,15 +27,15 @@ public class Main{
 		}
 		Delay.msDelay(100);
 		int count = 0;
-		man.redirectSystemOutputToConnectedPC();
+		man.redirectSystemOutputToConnectedPC(true);
 		while(!Button.ESCAPE.isDown()){ //Programmhauptschleife
 			
-			if(!man.isAvailable()){ //Prüfen, ob der PCCommunicationmanager geschlossen wurde
+			if(!man.isAvailable()){ //PrÃ¼fen, ob der PCCommunicationmanager geschlossen wurde
 				System.out.println("Connection closed!");
 				return;
 			}
 			
-			if(Button.LEFT.isDown()){ //Prüfen, ob der Linke Knopp gedrückt ist
+			if(Button.LEFT.isDown()){ //PrÃ¼fen, ob der Linke Knopp gedrÃ¼ckt ist
 //				man.writeString("Message " + ++count); //Eine Nachricht senden
 				System.out.println("Message: " + ++count);
 				while(Button.LEFT.isDown()); //Waren, bis der Knopp wieder losgelassen wird
@@ -49,13 +49,13 @@ public class Main{
 				while(Button.RIGHT.isDown());
 			}
 			
-			if(man.hasDatafieldUpdate()){ //Prüfen, ob es ein Datenfeldupdate gibt
+			if(man.hasDatafieldUpdate()){ //PrÃ¼fen, ob es ein Datenfeldupdate gibt
 				NxtDataField[] newDatafields = man.getDatafields(); //Die neuen Datenfelder hohlen
 				//Etwas mit den Daten machen
 			}
 			Delay.msDelay(10);
 		}
-		man.close(); //Zum Ende des Programms den PCCommunicationmanager schließen
+		man.close(); //Zum Ende des Programms den PCCommunicationmanager schlieÃŸen
 	}
 	
 	private static void m1(){

@@ -14,6 +14,7 @@ import nxt.object.DataFieldType;
 import nxt.object.ExceptionToStringOutputStream;
 import nxt.object.ExceptionToStringPrintStream;
 import nxt.out.NxtToPcOutputStreamManager;
+import nxt.out.PcPrintStream;
 
 /**
  * Dient nach der Verbindungsherstellung mit Hilfe von {@link PCConnector} dazu,
@@ -27,7 +28,7 @@ public class PCCommunicationManager implements Closeable{
 	private PcToNxtInputStreamManager in;
 	private ExceptionToStringPrintStream ps;
 	private volatile boolean available;
-	private boolean datafieldUpdate;
+	private volatile boolean datafieldUpdate;
 	private ArrayList<Object> unreadMessages;
 	private ArrayList<NxtDataField> dataFields;
 	
@@ -51,7 +52,7 @@ public class PCCommunicationManager implements Closeable{
 	}
 	
 	/**
-	 * Schaut, ob es ein Update für die Datenfelder gibt
+	 * Schaut, ob es ein Update fÃ¼r die Datenfelder gibt
 	 * @return <code>true</code>, wenn es ein Update gibt, ansonsten <code>false</code>
 	 */
 	public boolean hasDatafieldUpdate(){
@@ -59,8 +60,8 @@ public class PCCommunicationManager implements Closeable{
 	}
 	
 	/**
-	 * Gibt die aktuellen Datenfelder als Array zurück und setzt
-	 * den hasDatafieldUpdate-Wert zurück
+	 * Gibt die aktuellen Datenfelder als Array zurÃ¼ck und setzt
+	 * den hasDatafieldUpdate-Wert zurÃ¼ck
 	 * @return <code>NxtDataField[]</code> mit allen Datenfeldern
 	 */
 	public NxtDataField[] getDatafields(){
@@ -74,7 +75,7 @@ public class PCCommunicationManager implements Closeable{
 	}
 	
 	/**
-	 * Uninteressant für aussen, intern wird diese Mehtode verwendet
+	 * Uninteressant fÃ¼r aussen, intern wird diese Mehtode verwendet
 	 * um ein Update der Datenfelder auszulesen
 	 * @param incoming
 	 */
@@ -147,15 +148,16 @@ public class PCCommunicationManager implements Closeable{
 	/**
 	 * Leitet den Verkehr von System.out.println(String s) auf den PC-Debugger um<br>
 	 * Bei verwendung von anderen Methoden kommt es zu unerwarteten Ergebnissen auf dem PC
+	 * @param lcd - gibt an, ob die Nachrichten dennoch auch auf dem NXT angezeigt werden sollen
 	 */
-	public void redirectSystemOutputToConnectedPC(){
-		PrintStream ps = new PrintStream(out.getRawOutputStream());
+	public void redirectSystemOutputToConnectedPC(boolean lcd){
+		PrintStream ps = new PcPrintStream(out.getRawOutputStream(), lcd);
 		System.out = ps;
 	}
 	
 	/**
-	 * Uninteressant für aussen, da diese Methode verwendet wird um zu zeigen,
-	 * dass die verbindung getrennt wurde, zum manuellen Schließen <code>close()</code> verwenden!
+	 * Uninteressant fÃ¼r aussen, da diese Methode verwendet wird um zu zeigen,
+	 * dass die verbindung getrennt wurde, zum manuellen SchlieÃŸen <code>close()</code> verwenden!
 	 * @param available
 	 */
 	public void setAvailability(boolean available){
@@ -163,7 +165,7 @@ public class PCCommunicationManager implements Closeable{
 	}
 	
 	/**
-	 * Uninteressant für aussen. Lässt die Datenströme eine neue Nachricht hinzufügen
+	 * Uninteressant fÃ¼r aussen. LÃ¤sst die DatenstrÃ¶me eine neue Nachricht hinzufï¿½gen
 	 * @param msg
 	 */
 	public void addNewMessage(Object msg){
@@ -171,20 +173,20 @@ public class PCCommunicationManager implements Closeable{
 	}
 	
 	/**
-	 * Schließt alle Verbindungen zum PC und teilt diesem
+	 * SchlieÃŸt alle Verbindungen zum PC und teilt diesem
 	 * mit, dass die Verbindung geschlossen wurde
 	 */
 	@Override
 	public void close(){
 		out.addStringToQueue("shutdown");
-		System.out =  new PrintStream(new LCDOutputStream());
+		System.out = new PrintStream(new LCDOutputStream());
 		Delay.msDelay(150);
 		this.available = false;
 		in.close();
 	}
 	
 	/**
-	 * Gibt zurück, ob die Verbindung noch besteht, oder abgebrochen wurde
+	 * Gibt zurï¿½ck, ob die Verbindung noch besteht, oder abgebrochen wurde
 	 * @return <code>true</code> wenn die Verbindung noch aktiv ist, ansonsten <code>false</code>
 	 */
 	public boolean isAvailable(){
