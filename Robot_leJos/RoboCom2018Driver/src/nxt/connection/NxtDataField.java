@@ -36,6 +36,11 @@ public class NxtDataField{
 			case FLOAT:
 				this.value = Float.parseFloat(value);
 				break;
+			case BOOLEAN:
+				this.value = Boolean.parseBoolean(value);
+				break;
+			default:
+				break;
 		}
 	}
 	
@@ -49,7 +54,7 @@ public class NxtDataField{
 	}
 	
 	/**
-	 * Gibt den Namen dieses Datenfeldes zurück
+	 * Gibt den Namen dieses Datenfeldes zurÃ¼ck
 	 * @return den Namen des Datenfeldes
 	 */
 	public String getName(){
@@ -57,7 +62,7 @@ public class NxtDataField{
 	}
 	
 	/**
-	 * Gibt den Datenfeldtyp dieses Datenfeldes zurück
+	 * Gibt den Datenfeldtyp dieses Datenfeldes zurÃ¼ck
 	 * @return den Datenfeldtyp {String, Integer, Long, Double, Float}
 	 */
 	public DataFieldType getType(){
@@ -65,7 +70,7 @@ public class NxtDataField{
 	}
 	
 	/**
-	 * Gibt den Datenfeldwert als Objekt zurück. Der tatsächliche Wert kann mithilfe von
+	 * Gibt den Datenfeldwert als Objekt zurÃ¼ck. Der tatsÃ¤chliche Wert kann mithilfe von
 	 * explizitem casten ermittelt werden. Beispiel:<br>
 	 * <code>Object datafield = getValue();<br>
 	 * if(datafield instanceof String){<br>

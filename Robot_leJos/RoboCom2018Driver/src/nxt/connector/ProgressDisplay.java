@@ -5,9 +5,10 @@ import lejos.util.Delay;
 
 public class ProgressDisplay extends Thread{
 	
-	private boolean isConnected;
+	private volatile boolean isConnected;
 	
 	public ProgressDisplay(){
+		this.setDaemon(true);
 		this.isConnected = false;
 	}
 	

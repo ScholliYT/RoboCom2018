@@ -210,6 +210,7 @@ public class ConnectToNxtDialog extends JFrame{
 		this.setVisible(false);
 		settings.put(settings.MOST_RECENT_CONNECTION_KEY, (rdbtnUsbConnection.isSelected() ? "usb" : "bluetooth"));
 		settings.put(settings.MOST_RECENT_NXT_KEY, cbNxtName.getSelectedItem().toString());
+		settings.saveCurrentSettings();
 		parent.init(connection.getInputStream(), connection.getOutputStream());
 	}
 	

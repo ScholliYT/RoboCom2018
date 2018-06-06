@@ -267,7 +267,7 @@ public class NXTCommunicationFrame extends JFrame{
 			public void actionPerformed(ActionEvent e){
 				JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
 				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				chooser.setDialogTitle("Eine Datei auswählen");
+				chooser.setDialogTitle("Eine Datei auswï¿½hlen");
 				chooser.setApproveButtonText("Okay");
 				if(chooser.showDialog(NXTCommunicationFrame.this, null) == JFileChooser.APPROVE_OPTION){
 					File f = chooser.getSelectedFile();
@@ -305,7 +305,7 @@ public class NXTCommunicationFrame extends JFrame{
 				lblWarning.setText("Update ausstehend...");
 				uploadCurrentDatafields();
 				lblWarning.setForeground(Color.BLACK);
-				lblWarning.setText("Update erfolgreich ausgeführt.");
+				lblWarning.setText("Update erfolgreich ausgefï¿½hrt.");
 			}
 		});
 		btnFireUpdate.setToolTipText("Updatet die oben eingestellten Datenfelder");
@@ -325,7 +325,7 @@ public class NXTCommunicationFrame extends JFrame{
 			public void mouseMoved(MouseEvent me){
 				int row = table.rowAtPoint(me.getPoint());
 				if(row != renderer.getCurrentHover()){
-					System.out.println("ROW: " + row);
+//					System.out.println("ROW: " + row);
 					renderer.setCurrentHover(row);
 					table.updateUI();
 				}
@@ -467,6 +467,7 @@ public class NXTCommunicationFrame extends JFrame{
 	
 	public void init(InputStream in, OutputStream out){
 		this.com = new NXTCommunication(in, out, this);
+		com.writeString("update");
 	}
 	
 	public MyFileTableModel getModel(){
@@ -506,15 +507,15 @@ public class NXTCommunicationFrame extends JFrame{
 		if(table.getSelectedRows().length > 0){
 			int[] selected = table.getSelectedRows();
 			if(!settings.getDeleteRowsWithoutDialog()){
-				int dialogResult = JOptionPane.showConfirmDialog(NXTCommunicationFrame.this, "Möchten Sie die " + selected.length + " ausgewählten Einträge endgültig löschen?", "Datenfelder löschen?", JOptionPane.YES_NO_OPTION);
-//				int dialogResult = JOptionPane.showConfirmDialog(NXTCommunicationFrame.this, "Möchten Sie die " + selected.length + " ausgewählten Einträge endgültig löschen?", "Datenfelder löschen?",
+				int dialogResult = JOptionPane.showConfirmDialog(NXTCommunicationFrame.this, "Mï¿½chten Sie die " + selected.length + " ausgewï¿½hlten Eintrï¿½ge endgï¿½ltig lï¿½schen?", "Datenfelder lï¿½schen?", JOptionPane.YES_NO_OPTION);
+//				int dialogResult = JOptionPane.showConfirmDialog(NXTCommunicationFrame.this, "Mï¿½chten Sie die " + selected.length + " ausgewï¿½hlten Eintrï¿½ge endgï¿½ltig lï¿½schen?", "Datenfelder lï¿½schen?",
 //						JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, new ImageIcon(NXTCommunicationFrame.class.getResource("/resources/delete_icon_15px.png")));
 				if(dialogResult != JOptionPane.OK_OPTION){
 					return;
 				}
 			}
 			
-			for(int i = selected.length - 1; i >= 0; i--){ //MUSS rückwärts laufen!
+			for(int i = selected.length - 1; i >= 0; i--){ //MUSS rï¿½ckwï¿½rts laufen!
 				model.deleteRow(selected[i]);
 			}
 			table.getSelectionModel().clearSelection();
@@ -535,7 +536,7 @@ public class NXTCommunicationFrame extends JFrame{
 	
 	public void showWarning(){
 		lblWarning.setForeground(Color.RED);
-		lblWarning.setText("Obacht! Nicht übertragene Änderungen!");
+		lblWarning.setText("Obacht! Nicht ï¿½bertragene ï¿½nderungen!");
 	}
 	
 	private void addTextToTextPane(String str, Color color, String fontFamily){
@@ -555,16 +556,16 @@ public class NXTCommunicationFrame extends JFrame{
 	
 }
 
-//Altes Entfernen der Datensätze mit einen Table-Keylistener:
+//Altes Entfernen der Datensï¿½tze mit einen Table-Keylistener:
 //table.addKeyListener(new KeyAdapter(){
 //@Override
 //public void keyPressed(KeyEvent e){
 //	if(e.getKeyCode() == KeyEvent.VK_DELETE){
 //		if(table.getSelectedRows().length > 0){
 //			int[] selected = table.getSelectedRows();
-//			int dialogResult = JOptionPane.showConfirmDialog(NXTCommunicationFrame.this, "Möchten Sie die " + selected.length + " ausgewählten Einträge endgültig löschen?", "Datenfelder löschen?", JOptionPane.YES_NO_OPTION);
+//			int dialogResult = JOptionPane.showConfirmDialog(NXTCommunicationFrame.this, "Mï¿½chten Sie die " + selected.length + " ausgewï¿½hlten Eintrï¿½ge endgï¿½ltig lï¿½schen?", "Datenfelder lï¿½schen?", JOptionPane.YES_NO_OPTION);
 //			if(dialogResult == JOptionPane.OK_OPTION){
-//				for(int i = selected.length - 1; i >= 0; i--){ //MUSS rückwärts laufen!
+//				for(int i = selected.length - 1; i >= 0; i--){ //MUSS rï¿½ckwï¿½rts laufen!
 ////					System.out.println(selected[i]);
 //					model.deleteRow(selected[i]);
 //				}

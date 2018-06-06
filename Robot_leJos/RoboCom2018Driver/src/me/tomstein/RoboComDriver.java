@@ -47,7 +47,7 @@ public class RoboComDriver{
 			PCConnector connector = new PCConnector(ConnectionType.BLUETOOTH, true, true, "speed", 250, "kp", 4.0F, "ki", 0.0F, "kd", 0.0F);
 			man = connector.attemptConnection();
 			if(man == null) return;
-			man.redirectSystemOutputToConnectedPC();
+			man.redirectSystemOutputToConnectedPC(true);
 		}
 		
 		new RoboComDriver(man);

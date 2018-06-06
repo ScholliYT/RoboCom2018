@@ -6,12 +6,22 @@ import java.util.ArrayList;
 import lejos.util.Delay;
 import nxt.connection.PCCommunicationManager;
 
+/**
+ * Managed den Output für das NXT-Gerät
+ * @author Simon
+ *
+ */
 public class NxtToPcOutputStreamManager extends Thread{
 	
 	private PCCommunicationManager parent;
 	private NxtToPcOutputStream out;
 	private ArrayList<String> toWrite;
 	
+	/**
+	 * Konstruktor der Klasse, wird intern aufgerufen
+	 * @param parent Der PCCommunikationsmanager, um bei Fehlern den kompletten Debugger zu beenden
+	 * @param out Der Default-Outputstream, durch die Verbindung mit dem PC bekommen
+	 */
 	public NxtToPcOutputStreamManager(PCCommunicationManager parent, OutputStream out){
 		this.parent = parent;
 		this.out = new NxtToPcOutputStream(out);
@@ -20,12 +30,19 @@ public class NxtToPcOutputStreamManager extends Thread{
 		super.start();
 	}
 	
+	/**
+	 * Fügt eine neue Nachricht zum Senden an den PC hinzu
+	 * @param str der zu versendende String
+	 */
 	public void addStringToQueue(String str){
 		synchronized(toWrite){
 			toWrite.add(str);
 		}
 	}
 	
+	/**
+	 * Threadschleife
+	 */
 	@Override
 	public void run(){
 		String[] msg = new String[0];
@@ -60,6 +77,10 @@ public class NxtToPcOutputStreamManager extends Thread{
 		}catch(Exception e){}
 	}
 	
+	/**
+	 * Gibt den Outputstream zurück
+	 * @return den "rohen" Outputstream
+	 */
 	public OutputStream getRawOutputStream(){
 		return out.getOutputStream();
 	}
