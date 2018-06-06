@@ -42,7 +42,7 @@ public class RoboComDriver{
 	private static final boolean DEBUG_ENABLED = true;
 	
 	public static void main(String[] args){
-		PCCommunicationManager man;
+		PCCommunicationManager man = null;
 		if(DEBUG_ENABLED){
 			PCConnector connector = new PCConnector(ConnectionType.BLUETOOTH, true, true, "speed", 200, "kp", 1.6F, "ki", 0.0F, "kd", 0.0F);
 			man = connector.attemptConnection();
