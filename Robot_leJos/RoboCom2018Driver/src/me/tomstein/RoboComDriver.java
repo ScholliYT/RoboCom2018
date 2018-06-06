@@ -59,6 +59,8 @@ public class RoboComDriver implements ButtonListener{
 	public RoboComDriver(PCCommunicationManager man){
 		Button.ESCAPE.addButtonListener(this);
 		Button.RIGHT.addButtonListener(this);
+		Button.LEFT.addButtonListener(this);
+		this.loadSettings();
 		this.man = man;
 		LCD.clear();
 		motorL = new GoodMotor(MotorPort.C);
@@ -248,44 +250,66 @@ public class RoboComDriver implements ButtonListener{
 			NxtDataField[] df = man.getDatafields();
 			
 			for(NxtDataField datafield : df){
-				String name = datafield.getName();
-				
-				switch (name){
-				case "speed":
-					this.speed = (int) datafield.getValue();
-					break;
-				case "kp":
-					this.kp = (float) datafield.getValue();
-					break;
-				case "ki":
-					this.ki = (float) datafield.getValue();
-					break;
-				case "kd":
-					this.kd = (float) datafield.getValue();
-					break;
-				case "delay":
-					this.delay = (int) datafield.getValue();
-					break;
-				case "aussenmotorfaktor":
-					this.aussenmotorfaktor = (float) datafield.getValue();
-					break;
-				default:
-					break;
-				}
+				interpretAndSetDatafield(datafield);
 			}
 		}
 	}
-
+	
 	@Override
 	public void buttonPressed(Button b){
 		if(b.getId() == Button.ID_ESCAPE) {
 			System.exit(0);
 		}else if(b.getId() == Button.ID_RIGHT){
 			integral = 0;
+		}else if(b.getId() == Button.ID_LEFT){
+			saveCurrentSettings();
 		}
 	}
-
+	
 	@Override
 	public void buttonReleased(Button b){}
-
+	
+	private void loadSettings(){
+		try{
+			for(NxtDataField df: DataSaver.getSingletone().loadSettings()){
+				interpretAndSetDatafield(df);
+			}
+		}catch(Exception e){}
+	}
+	
+	private void saveCurrentSettings(){
+		try{
+			DataSaver.getSingletone().saveData("speed", speed, "kp", kp, "ki", ki, "kd", kd, "delay", delay, "aussenmotorfaktor", aussenmotorfaktor);
+		}catch(Exception e){
+			System.out.println("Could not save settings due to an error!");
+		}
+	}
+	
+	private void interpretAndSetDatafield(NxtDataField df){
+		String name = df.getName();
+		
+		switch (name){
+		case "speed":
+			this.speed = (int) df.getValue();
+			break;
+		case "kp":
+			this.kp = (float) df.getValue();
+			break;
+		case "ki":
+			this.ki = (float) df.getValue();
+			break;
+		case "kd":
+			this.kd = (float) df.getValue();
+			break;
+		case "delay":
+			this.delay = (int) df.getValue();
+			break;
+		case "aussenmotorfaktor":
+			this.aussenmotorfaktor = (float) df.getValue();
+			break;
+		default:
+			break;
+		}
+	}
+	
 }
