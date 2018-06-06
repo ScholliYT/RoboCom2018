@@ -40,7 +40,7 @@ public class NxtToPcInputStreamManager extends Thread{
 					if(buffer.charAt(buffer.length() - 1) == '\n'){
 						if(buffer.startsWith(" ")){
 							buffer = "";
-							Delay.msDelay(10); //Default: 10
+							Delay.msDelay(10);
 							continue;
 						}else if(buffer.startsWith("df!")){
 							buffer = buffer.substring(3, buffer.length()-1);

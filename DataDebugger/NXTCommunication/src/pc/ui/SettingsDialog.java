@@ -234,7 +234,6 @@ public class SettingsDialog extends JDialog{
 			public void actionPerformed(ActionEvent e){
 				btnSelectLogFolder.setEnabled(chckbxAutomaticallyCreateLogs.isSelected());
 				btnOpen.setEnabled(chckbxAutomaticallyCreateLogs.isSelected());
-//				btn
 				settings.put(settings.CREATE_AUTOMATIC_LOG_FILES_KEY, chckbxAutomaticallyCreateLogs.isSelected() + "");
 			}
 		});

@@ -23,8 +23,4 @@ public class NxtToPcInputStream{
 		reader.close();
 	}
 	
-//	public int available() throws IOException{
-//		return raw.available();
-//	}
-	
 }

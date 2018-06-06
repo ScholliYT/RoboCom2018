@@ -13,7 +13,6 @@ public class MyTableCellRenderer extends DefaultTableCellRenderer{
 	
 	private static final long serialVersionUID = 7600394344309140741L;
 	
-//	private JComboBox<String> comboBox;
 	private Color defaultSelectionForeground, defaultSelectionBackground, myLightGray, myDarkGreen, myHoverColor;
 	private MyFileTableModel model;
 	private int currentHover;

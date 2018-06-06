@@ -189,6 +189,7 @@ public class ConnectToNxtDialog extends JFrame{
 			}else{
 				rdbtnUsbConnection.setSelected(false);
 				rdbtnBluetoothConnection.setSelected(true);
+				spinnerTimeout.setEnabled(false);
 			}
 		}
 		
