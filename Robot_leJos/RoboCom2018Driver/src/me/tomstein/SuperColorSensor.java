@@ -39,4 +39,12 @@ public class SuperColorSensor extends ColorSensor{
 		zero = 1023 - low;
 	}
 	
+	public void setHundred(int hundred){
+		this.hundred = hundred;
+	}
+	
+	public void setZero(int zero){
+		this.zero = zero;
+	}
+	
 }

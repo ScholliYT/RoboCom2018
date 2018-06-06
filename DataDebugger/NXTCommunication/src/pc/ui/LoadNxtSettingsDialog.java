@@ -20,7 +20,7 @@ public class LoadNxtSettingsDialog extends JDialog{
 	private static LoadNxtSettingsDialog SINGLETONE;
 	
 	public LoadNxtSettingsDialog() {
-		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setResizable(false);

@@ -16,7 +16,7 @@ import nxt.connector.PCConnector;
 
 import java.util.*;
 
-public class RoboComDriver{
+public class RoboComDriver implements ButtonListener{
 	
 	private GoodMotor motorL, motorR;
 	private SuperColorSensor lightsensor;
@@ -32,10 +32,13 @@ public class RoboComDriver{
 	private final float STOP_DISTANCE = 15; // Distance to the tennis ball when stop lineFollowing
 	
 	// Start Constants for the lineFollowing
-	private int speed = 250;
-	private float kp = 4.0f;
-	private float ki = 0.0f;
-	private float kd = 0.0f;
+	private int speed = 50;
+	private int delay = 20;
+	private float kp = 1.2f;
+	private float ki = 0.1f;
+	private float kd = 1.0f;
+	private float aussenmotorfaktor = 1.05F;
+	private int integral = 0;
 	// End Constants for the lineFollowing
 	private PCCommunicationManager man;
 	
@@ -44,7 +47,7 @@ public class RoboComDriver{
 	public static void main(String[] args){
 		PCCommunicationManager man;
 		if(DEBUG_ENABLED){
-			PCConnector connector = new PCConnector(ConnectionType.BLUETOOTH, true, true, "speed", 250, "kp", 4.0F, "ki", 0.0F, "kd", 0.0F);
+			PCConnector connector = new PCConnector(ConnectionType.BLUETOOTH, true, true, "speed", 50, "kp", 1.2F, "ki", 0.1F, "kd", 1.0F, "delay", 20, "aussenmotorfaktor", 1.05F);
 			man = connector.attemptConnection();
 			if(man == null) return;
 			man.redirectSystemOutputToConnectedPC(true);
@@ -54,6 +57,8 @@ public class RoboComDriver{
 	}
 
 	public RoboComDriver(PCCommunicationManager man){
+		Button.ESCAPE.addButtonListener(this);
+		Button.RIGHT.addButtonListener(this);
 		this.man = man;
 		LCD.clear();
 		motorL = new GoodMotor(MotorPort.C);
@@ -151,27 +156,29 @@ public class RoboComDriver{
 			Delay.msDelay(500);
 			System.out.println("Bitte auf WEISS stellen!!");
 			while (!Button.ENTER.isDown());
-			weis.add(lightsensor.getNormalizedLightValue());
+			weis.add(lightsensor.getRawLightValue());
 			System.out.println("Weiss: " + weis.get(i - 1));
 		}
 		for(int i = 1; i <= measurements; i++){
 			Delay.msDelay(500);
 			System.out.println("Bitte auf SCHWARZ stellen!!");
 			while(!Button.ENTER.isDown());
-			schwarz.add(lightsensor.getNormalizedLightValue());
+			schwarz.add(lightsensor.getRawLightValue());
 			System.out.println("Schwarz: " + schwarz.get(i - 1));
 		}
 		int mitteweis = 0;
 		for (int x : weis){
 			mitteweis += x;
 		}
-		lightsensor.setHigh(mitteweis / measurements);
+//		lightsensor.setHigh(mitteweis / measurements);
+		lightsensor.setHundred(mitteweis / measurements);
 
 		int mitteschwarz = 0;
 		for(int x : schwarz){
 			mitteschwarz += x;
 		}
-		lightsensor.setLow(mitteschwarz / measurements);
+//		lightsensor.setLow(mitteschwarz / measurements);
+		lightsensor.setZero(mitteschwarz / measurements);
 	}
 	
 	private void lineFollower(){
@@ -181,7 +188,7 @@ public class RoboComDriver{
 		motorL.forward();
 		int target = 50;
 		
-		int integral = 0;
+		
 		int derivative = 0;
 		int lasterror = 0;
 		long time;
@@ -193,8 +200,9 @@ public class RoboComDriver{
 			
 			int error = target - readValue; // Differenz zur Kante berrechnen
 			
-			if(error == 0){ // Auf der Kante
+			if(error <= 1 && error >= -1){ // Auf der Kante
 				integral = 0; // Integral zurücksetzen
+				
 			}
 			
 			integral += error;
@@ -205,7 +213,7 @@ public class RoboComDriver{
 			
 			int turn = (int) (kp * error + ki * integral + kd * derivative);
 			// System.out.println(turn);
-			motorR.setPower(speed - turn);
+			motorR.setPower((int) (speed - (turn * aussenmotorfaktor)));
 			motorL.setPower(speed + turn);
 			
 			
@@ -213,6 +221,7 @@ public class RoboComDriver{
 			lasterror = error;
 			
 			updateDatafields();
+			
 			if(++count % 5 == 0){
 				count = 0;
 				System.out.println("ReadValue: " + readValue + " Error: " + error + " Right: " + (motorR.getPower()) + " Left: " + (motorL.getPower()));
@@ -226,7 +235,7 @@ public class RoboComDriver{
 				*/
 			}
 			try {
-				Delay.msDelay(50 - (System.currentTimeMillis() - time));
+				Delay.msDelay(delay - (System.currentTimeMillis() - time));
 			}catch(Exception e) {}
 		}
 		motorL.stop();
@@ -254,11 +263,29 @@ public class RoboComDriver{
 				case "kd":
 					this.kd = (float) datafield.getValue();
 					break;
+				case "delay":
+					this.delay = (int) datafield.getValue();
+					break;
+				case "aussenmotorfaktor":
+					this.aussenmotorfaktor = (float) datafield.getValue();
+					break;
 				default:
 					break;
 				}
 			}
 		}
 	}
+
+	@Override
+	public void buttonPressed(Button b){
+		if(b.getId() == Button.ID_ESCAPE) {
+			System.exit(0);
+		}else if(b.getId() == Button.ID_RIGHT){
+			integral = 0;
+		}
+	}
+
+	@Override
+	public void buttonReleased(Button b){}
 
 }
