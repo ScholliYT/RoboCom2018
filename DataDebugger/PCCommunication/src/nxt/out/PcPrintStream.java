@@ -25,6 +25,7 @@ public class PcPrintStream extends PrintStream{
 		if(lcd){
 			try{
 				lcdOut.write(s.getBytes());
+				lcdOut.flush();
 			}catch(Exception ignore){}
 		}
 		super.println(s);
@@ -35,6 +36,7 @@ public class PcPrintStream extends PrintStream{
 		if(lcd){
 			try{
 				lcdOut.write(String.valueOf(v).getBytes());
+				lcdOut.flush();
 			}catch(Exception ignore){}
 		}
 		super.println(v);

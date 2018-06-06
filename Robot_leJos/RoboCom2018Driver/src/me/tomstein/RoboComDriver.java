@@ -19,7 +19,7 @@ import java.util.*;
 public class RoboComDriver{
 	
 	private NXTRegulatedMotor motorL, motorR;
-	private LightSensor lightsensor;
+	private ColorSensor lightsensor;
 	private UltrasonicSensor ultrasonicSensor;
 	
 	private NXTConnection connectionToNXT_ARM;
@@ -32,19 +32,19 @@ public class RoboComDriver{
 	private final float STOP_DISTANCE = 15; // Distance to the tennis ball when stop lineFollowing
 	
 	// Start Constants for the lineFollowing
-	private int speed = 200;
-	private float kp = 1.6f;
+	private int speed = 250;
+	private float kp = 4.0f;
 	private float ki = 0.0f;
-	private float kd = 2.0f;
+	private float kd = 0.0f;
 	// End Constants for the lineFollowing
 	private PCCommunicationManager man;
 	
 	private static final boolean DEBUG_ENABLED = true;
 	
 	public static void main(String[] args){
-		PCCommunicationManager man = null;
+		PCCommunicationManager man;
 		if(DEBUG_ENABLED){
-			PCConnector connector = new PCConnector(ConnectionType.BLUETOOTH, true, true, "speed", 200, "kp", 1.6F, "ki", 0.0F, "kd", 0.0F);
+			PCConnector connector = new PCConnector(ConnectionType.BLUETOOTH, true, true, "speed", 250, "kp", 4.0F, "ki", 0.0F, "kd", 0.0F);
 			man = connector.attemptConnection();
 			if(man == null) return;
 			man.redirectSystemOutputToConnectedPC();
@@ -56,9 +56,10 @@ public class RoboComDriver{
 	public RoboComDriver(PCCommunicationManager man){
 		this.man = man;
 		LCD.clear();
-		motorL = new NXTRegulatedMotor(MotorPort.B);
-		motorR = new NXTRegulatedMotor(MotorPort.C);
-		lightsensor = new LightSensor(SensorPort.S3);
+		motorL = new NXTRegulatedMotor(MotorPort.C);
+		motorR = new NXTRegulatedMotor(MotorPort.B);
+		lightsensor = new ColorSensor(SensorPort.S3);
+		lightsensor.setFloodlight(true);
 		ultrasonicSensor = new UltrasonicSensor(SensorPort.S2);
 		
 		// setupRS485Connection();
@@ -173,7 +174,8 @@ public class RoboComDriver{
 	}
 	
 	private void lineFollower(){
-		calibrateLightSensor(3);
+		calibrateLightSensor(2);
+		
 		motorR.forward();
 		motorL.forward();
 		int target = 50;
@@ -185,7 +187,8 @@ public class RoboComDriver{
 		int count = 0;
 		while(!ballIsInRange()){ // Solange ausführen, bis der der Ball gefunden ist
 			time = System.currentTimeMillis();
-			int readValue = lightsensor.readValue(); // Atuellen Wert des Lichtsensors einlesen
+			int readValue = lightsensor.getLightValue(); // Atuellen Wert des Lichtsensors einlesen
+			//System.out.println("Measuered: " + readValue);
 			
 			int error = target - readValue; // Differenz zur Kante berrechnen
 			
@@ -201,17 +204,25 @@ public class RoboComDriver{
 			
 			int turn = (int) (kp * error + ki * integral + kd * derivative);
 			// System.out.println(turn);
-			motorR.setSpeed(speed - turn);
+			motorR.setSpeed((int) (speed - turn*1.1));
 			motorL.setSpeed(speed + turn);
+			
+			
 			// System.out.println((speed-turn) + ":" + (speed+turn));
 			lasterror = error;
 			
 			updateDatafields();
-			if(++count % 10 == 0){
+			if(++count % 5 == 0){
 				count = 0;
+				System.out.println("Error: " + error + " Right: " + (speed - turn) + " Left: " + (speed + turn));
+				/*
+				System.out.println("Measuered: " + readValue);
 				System.out.println("Error: " + error + "; integral: " + integral + "; derivative: " + derivative
 						+ "; lasterror: " + lasterror);
+				System.out.println("Right: " + (speed - turn));
+				System.out.println("Left: " + (speed + turn));
 				System.out.println("Durchlauf: " + (System.currentTimeMillis() - time) + "ms.");
+				*/
 			}
 			try {
 				Delay.msDelay(50 - (System.currentTimeMillis() - time));
