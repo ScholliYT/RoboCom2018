@@ -303,7 +303,7 @@ public class SettingsDialog extends JDialog{
 				try{
 					Desktop.getDesktop().open(settings.getCurrentLogFileFolder());
 				}catch(IOException e1){
-					ExceptionReporter.showDialog(SettingsDialog.this, e1);
+					ExceptionReporter.showDialog(SettingsDialog.this, e1, false);
 				}
 			}
 		});

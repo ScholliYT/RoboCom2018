@@ -224,6 +224,18 @@ public class NXTCommunicationFrame extends JFrame{
 					}
 				});
 				mnVerbindung.add(mntmDisconnect);
+				
+				JMenu mnInformationen = new JMenu("Informationen");
+				menuBar.add(mnInformationen);
+				
+				JMenuItem mntmber = new JMenuItem("\u00DCber dieses Programm");
+				mntmber.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e){
+						AboutProgramDialog.showDialogAt(NXTCommunicationFrame.this);
+					}
+				});
+				mntmber.setIcon(new ImageIcon(NXTCommunicationFrame.class.getResource("/resources/about_icon_16px.png")));
+				mnInformationen.add(mntmber);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -280,7 +292,7 @@ public class NXTCommunicationFrame extends JFrame{
 						}
 						
 					}catch(Exception e1){
-						ExceptionReporter.showDialog(NXTCommunicationFrame.this, e1);
+						ExceptionReporter.showDialog(NXTCommunicationFrame.this, e1, true);
 					}
 				}
 			}
@@ -415,7 +427,7 @@ public class NXTCommunicationFrame extends JFrame{
 				}
 				fos = new FileOutputStream(logFile, logFile.exists());
 			}catch(Exception e){
-				ExceptionReporter.showDialog(this, e);
+				ExceptionReporter.showDialog(this, e, false);
 			}
 		}
 	}
@@ -434,7 +446,7 @@ public class NXTCommunicationFrame extends JFrame{
 			try{
 				fos.write(message.getBytes());
 			}catch(IOException e){
-				ExceptionReporter.showDialog(this, e);
+				ExceptionReporter.showDialog(this, e, false);
 			}
 		}
 	}
@@ -542,7 +554,7 @@ public class NXTCommunicationFrame extends JFrame{
 		try{
 			doc.insertString(doc.getLength(), (textAreaNxtInput.getText().endsWith("\n") || textAreaNxtInput.getText().isEmpty() ? "" : "\n") + str, style);
 		}catch(BadLocationException e){
-			ExceptionReporter.showDialog(this, e);
+			ExceptionReporter.showDialog(this, e, true);
 		}
 		if(settings.getNxtDebuggingAutoscrollActive()){
 			textAreaNxtInput.setCaretPosition(textAreaNxtInput.getDocument().getLength());

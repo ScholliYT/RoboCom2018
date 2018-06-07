@@ -15,6 +15,7 @@ import java.awt.Font;
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.Toolkit;
 
 public class ExceptionReporter extends JDialog{
 	
@@ -23,8 +24,10 @@ public class ExceptionReporter extends JDialog{
 	private JTextArea tfException;
 	private JButton btnRestart;
 	private JButton btnShutdown;
+	private JButton btnContinue;
 	
 	public ExceptionReporter(){
+		setIconImage(Toolkit.getDefaultToolkit().getImage(ExceptionReporter.class.getResource("/resources/exception_icon_16px.png")));
 		addWindowListener(new WindowAdapter(){
 			@Override
 			public void windowClosing(WindowEvent e){
@@ -57,6 +60,7 @@ public class ExceptionReporter extends JDialog{
 		getContentPane().add(separator);
 		
 		btnShutdown = new JButton("Programm beenden");
+		btnShutdown.setToolTipText("Das Programm beenden");
 		btnShutdown.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				System.exit(0);
@@ -67,6 +71,7 @@ public class ExceptionReporter extends JDialog{
 		getContentPane().add(btnShutdown);
 		
 		btnRestart = new JButton("Programm neu starten");
+		btnRestart.setToolTipText("Das Programm neu starten");
 		btnRestart.setEnabled(false);
 		btnRestart.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -90,9 +95,22 @@ public class ExceptionReporter extends JDialog{
 		tfException.setBackground(SystemColor.menu);
 		tfException.setHighlighter(null);
 		
+		btnContinue = new JButton("Weiter");
+		btnContinue.setToolTipText("Diesen Dialog schlie\u00DFen und das Programm weiter ausf\u00FChren");
+		btnContinue.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				ExceptionReporter.this.setVisible(false);
+			}
+		});
+		btnContinue.setEnabled(false);
+		btnContinue.setBounds(145, 344, 89, 23);
+		btnContinue.setFocusPainted(false);
+		getContentPane().add(btnContinue);
+		
 	}
 	
 	private void displayException(Exception ex){
+		tfException.setText("");
 		tfException.append(ex.getClass().getName() + ": " + ex.getLocalizedMessage() + "\n");
 		
 		for(StackTraceElement element : ex.getStackTrace()){
@@ -110,11 +128,19 @@ public class ExceptionReporter extends JDialog{
 		
 	}
 	
-	public static void showDialog(Container parent, Exception exception){
+	public static void showDialog(Container parent, Exception exception, boolean criticalError){
 		ExceptionReporter reporter = new ExceptionReporter();
+		if(criticalError){
+			reporter.btnContinue.setEnabled(false);
+			reporter.btnRestart.setEnabled(false); //TODO einfügen!
+			reporter.btnShutdown.setEnabled(true);
+		}else{
+			reporter.btnContinue.setEnabled(true);
+			reporter.btnRestart.setEnabled(false);
+			reporter.btnShutdown.setEnabled(true);
+		}
 		reporter.displayException(exception);
 		reporter.setLocationRelativeTo(parent);
 		reporter.setVisible(true);
 	}
-	
 }

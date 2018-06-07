@@ -93,7 +93,7 @@ public class SettingsManager{
 			}
 			
 		}catch(Exception e){
-			ExceptionReporter.showDialog(null, e);
+			ExceptionReporter.showDialog(null, e, true);
 		}
 		ensureEntryExists(MOST_RECENT_CONNECTION_KEY, "usb");
 		ensureEntryExists(MOST_RECENT_NXT_KEY, "");
@@ -281,7 +281,7 @@ public class SettingsManager{
 			oos.flush();
 			oos.close();
 		}catch(Exception e){
-			ExceptionReporter.showDialog(null, e);
+			ExceptionReporter.showDialog(null, e, true);
 		}
 	}
 	

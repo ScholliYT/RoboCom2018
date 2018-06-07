@@ -1,7 +1,9 @@
 package pc.connector;
 
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
+import js.tinyvm.ExceptionRecord;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
 import lejos.pc.comm.NXTCommFactory;
@@ -89,7 +91,16 @@ public class ConnectorThread extends Thread{
 					pb.setValue((int) (((float) timeLapsed / (float) timeout) * 100));
 				}
 			}catch(NXTCommException e){
-				ExceptionReporter.showDialog(dialog, e);
+				int option = JOptionPane.showConfirmDialog(dialog, "Die Bluetoothverbindung mit dem NXT \"" + nxtName + "\" ist fehlgeschlagen.\n"
+						+ "Stellen Sie sicher, dass das Gerät über Bluetooth erreichbar ist und das NXT-Program richtig gestartet wurde.\n"
+						+ "Möchten Sie sich den Fehler jetzt anzeigen lassen?",
+						"Verbindungsversuch fehlgeschlagen!", JOptionPane.YES_NO_OPTION);
+				
+				if(option == JOptionPane.YES_OPTION){
+					ExceptionReporter.showDialog(dialog, e, false);
+				}
+				
+				dialog.resetDialog();
 				return;
 			}
 		}

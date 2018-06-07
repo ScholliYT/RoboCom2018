@@ -19,7 +19,7 @@ public class DataSaver{
 	
 	private final File data = new File("robocomSettings.cfg");
 	
-	private static DataSaver SINGLETONE = new DataSaver();
+	private static final DataSaver SINGLETONE = new DataSaver();
 	
 	private DataSaver(){
 		try{
