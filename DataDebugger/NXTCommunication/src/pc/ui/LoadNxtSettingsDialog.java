@@ -2,6 +2,7 @@ package pc.ui;
 
 import javax.swing.JDialog;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import java.awt.SystemColor;
 import javax.swing.JProgressBar;
@@ -68,6 +69,7 @@ public class LoadNxtSettingsDialog extends JDialog{
 			SINGLETONE = new LoadNxtSettingsDialog();
 		}
 		SINGLETONE.setLocationRelativeTo(parent);
+		SwingUtilities.updateComponentTreeUI(SINGLETONE);
 		SINGLETONE.setVisible(true);
 	}
 	

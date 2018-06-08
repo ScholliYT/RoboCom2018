@@ -7,6 +7,7 @@ import javax.swing.JTextPane;
 import java.awt.SystemColor;
 import javax.swing.JButton;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
@@ -28,17 +29,17 @@ public class AboutProgramDialog extends JDialog{
 		setResizable(false);
 		setTitle("\u00DCber dieses Programm...");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(AboutProgramDialog.class.getResource("/resources/about_icon_16px.png")));
-		setBounds(100, 100, 450, 465);
+		setBounds(100, 100, 345, 465);
 		getContentPane().setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPane.setBounds(10, 11, 424, 380);
+		scrollPane.setBounds(10, 11, 320, 380);
 		getContentPane().add(scrollPane);
 		
 		textPaneAbout = new JTextPane();
 		textPaneAbout.setContentType("text/html");
-		textPaneAbout.setText("<html>\r\n<h2 style=\"text-align: center\">\u00DCber die Software</h2>\r\n<p style=\"text-align: justify\">Dieses Programm wurde von Simon R\u00FCsweg im Rahmen der Robotik-AG (angeandte Informatik) unter der Leitung von Herr Bittner w\u00E4hrend des Unterrichts und zu gro\u00DFen Teilen in seiner Freizeit entwickelt. Der Zweck von diesem Programm dient im einfachen \u00DCbertragen von Daten an den NXT w\u00E4hrend dieser ein Programm ausf\u00FChrt. Ebenfalls dient es zum einfachen Senden von Daten vom NXT-Brick an den PC, um Daten schnell analysieren zu k\u00F6nnen, um so einen erweiterten und verbesserten NXT-Remotedebugger darzustellen. Verwendete Bibliotheken und Resourcen werden unten aufgef\u00FChrt.</p><br>\r\n\r\n<h3 style=\"text-align: center\">Verwendete Bibliotheken</h3>\r\n<ul>\r\n<li><a href=\"http://www.lejos.org/\">LeJos 0.9.1 f\u00FCr NXT-Bricks</a></li>\r\n</ul>\r\n\r\n<h3 style=\"text-align: center\">Verwendete Ressoucen:</h3>\r\n<ul>\r\n<li>Ein Gro\u00DFteil der Icons werden zur Verf\u00FCgung gestellt von <a href=\"https://icons8.com/\">icons8.com</a></li>\r\n</ul>\r\n\r\n<h3 style=\"text-align: center\">Github-Seite des Projektes:</h3>\r\n<ul>\r\n<li><a href=\"https://github.com/ScholliYT/RoboCom2018/\">ScholliYT/RoboCom2018</a></li>\r\n</ul>\r\n</html>");
+		textPaneAbout.setText("<html>\r\n<h2 style=\"text-align: center\">\u00DCber die Software</h2>\r\n<p style=\"text-align: justify\">Dieses Programm wurde von Simon R\u00FCsweg im Rahmen der Robotik-AG (angewandte Informatik) unter der Leitung von Herr Bittner w\u00E4hrend des Unterrichts und zu gro\u00DFen Teilen in seiner Freizeit entwickelt. Der Zweck von diesem Programm dient im einfachen \u00DCbertragen von Daten an den NXT w\u00E4hrend dieser ein Programm ausf\u00FChrt. Ebenfalls dient es zum einfachen Senden von Daten vom NXT-Brick an den PC, um Daten schnell analysieren zu k\u00F6nnen, um so einen erweiterten und verbesserten NXT-Remotedebugger darzustellen. Verwendete Bibliotheken und Resourcen werden unten aufgef\u00FChrt.</p><br>\r\n\r\n<h3>Verwendete Bibliotheken</h3>\r\n<ul>\r\n<li><a href=\"http://www.lejos.org/\">LeJos 0.9.1 f\u00FCr NXT-Bricks</a></li>\r\n</ul>\r\n\r\n<h3>Verwendete Ressoucen:</h3>\r\n<ul>\r\n<li>Ein Gro\u00DFteil der Icons werden zur Verf\u00FCgung gestellt von <a href=\"https://icons8.com/\">icons8.com</a></li>\r\n</ul>\r\n\r\n<h3>Github-Seite des Projektes:</h3>\r\n<ul>\r\n<li><a href=\"https://github.com/ScholliYT/RoboCom2018/\">ScholliYT/RoboCom2018</a></li>\r\n</ul>\r\n</html>");
 		textPaneAbout.setBackground(SystemColor.menu);
 		textPaneAbout.setEditable(false);
 		textPaneAbout.setHighlighter(null);
@@ -62,7 +63,7 @@ public class AboutProgramDialog extends JDialog{
 			}
 		});
 		btnClose.setToolTipText("Diesen Dialog schlie\u00DFen");
-		btnClose.setBounds(324, 402, 110, 23);
+		btnClose.setBounds(220, 402, 110, 23);
 		btnClose.setFocusPainted(false);
 		getContentPane().add(btnClose);
 	}
@@ -70,6 +71,7 @@ public class AboutProgramDialog extends JDialog{
 	public static void showDialogAt(Component parent){
 		AboutProgramDialog dialog = new AboutProgramDialog();
 		dialog.setLocationRelativeTo(parent);
+		SwingUtilities.updateComponentTreeUI(dialog);
 		dialog.setVisible(true);
 	}
 	

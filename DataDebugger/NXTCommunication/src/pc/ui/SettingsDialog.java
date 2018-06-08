@@ -15,6 +15,8 @@ import javax.swing.border.TitledBorder;
 import pc.object.SettingsManager;
 
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.awt.Desktop;
@@ -329,6 +331,7 @@ public class SettingsDialog extends JDialog{
 		btnEnterData.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				dialogExceptionParsing.setLocationRelativeTo(SettingsDialog.this);
+				SwingUtilities.updateComponentTreeUI(dialogExceptionParsing);
 				dialogExceptionParsing.setVisible(true);
 			}
 		});
@@ -372,6 +375,7 @@ public class SettingsDialog extends JDialog{
 			SINGLETONE = new SettingsDialog();
 		}
 		SINGLETONE.setLocationRelativeTo(parent);
+		SwingUtilities.updateComponentTreeUI(SINGLETONE);
 		SINGLETONE.setVisible(true);
 	}
 	

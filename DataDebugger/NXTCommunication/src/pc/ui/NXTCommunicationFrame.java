@@ -19,12 +19,16 @@ import pc.connection.NXTCommunication;
 import pc.object.DataFieldType;
 import pc.object.SettingsManager;
 import pc.ui.Object.DataFieldTypeCellEditor;
+import pc.ui.Object.LookAndFeelActionListener;
+import pc.ui.Object.LookAndFeelMenuItem;
 import pc.ui.Object.MyFileTableModel;
 import pc.ui.Object.MyTableCellRenderer;
 
 import javax.swing.ListSelectionModel;
 import javax.swing.JSeparator;
 import javax.swing.UIManager;
+import javax.swing.UIManager.LookAndFeelInfo;
+
 import java.awt.Color;
 import java.awt.Dimension;
 
@@ -51,6 +55,8 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -60,6 +66,7 @@ import java.awt.FlowLayout;
 import javax.swing.JSplitPane;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import javax.swing.JRadioButtonMenuItem;
 
 public class NXTCommunicationFrame extends JFrame{
 	
@@ -89,6 +96,8 @@ public class NXTCommunicationFrame extends JFrame{
 	private JScrollPane scrollPaneTable;
 	private JSplitPane splitPane;
 	private JLabel lblWarning;
+	private JRadioButtonMenuItem menuItemSystemLookAndFeel;
+	private JMenu mnView;
 	
 	public NXTCommunicationFrame(){
 		addComponentListener(new ComponentAdapter() {
@@ -96,7 +105,6 @@ public class NXTCommunicationFrame extends JFrame{
 			public void componentResized(ComponentEvent e){
 				if(splitPane != null){
 					splitPane.setDividerLocation((int) (splitPane.getSize().getWidth()/2));
-//					splitPane.setDividerSize(0);
 				}
 			}
 		});
@@ -243,6 +251,16 @@ public class NXTCommunicationFrame extends JFrame{
 				});
 				mnVerbindung.add(mntmDisconnect);
 				
+				mnView = new JMenu("Ansicht");
+				menuBar.add(mnView);
+				
+				menuItemSystemLookAndFeel = new JRadioButtonMenuItem("Systemansicht");
+				menuItemSystemLookAndFeel.setSelected(true);
+				mnView.add(menuItemSystemLookAndFeel);
+				
+				JSeparator separator = new JSeparator();
+				mnView.add(separator);
+				
 				JMenu mnInformationen = new JMenu("Informationen");
 				menuBar.add(mnInformationen);
 				
@@ -254,6 +272,9 @@ public class NXTCommunicationFrame extends JFrame{
 				});
 				mntmber.setIcon(new ImageIcon(NXTCommunicationFrame.class.getResource("/resources/about_icon_16px.png")));
 				mnInformationen.add(mntmber);
+		
+		loadLookAndFeels();
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -396,17 +417,7 @@ public class NXTCommunicationFrame extends JFrame{
 		flowLayout.setAlignment(FlowLayout.RIGHT);
 		panelNxtInput.add(panelNxtInputBottom, BorderLayout.SOUTH);
 		
-		btnClear = new JButton("L\u00F6schen");
-		panelNxtInputBottom.add(btnClear);
-		btnClear.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				textAreaNxtInput.setText("");
-			}
-		});
-		btnClear.setToolTipText("L\u00F6scht das obere Textfeld");
-		btnClear.setFocusPainted(false);
-		
-		btnSave = new JButton("Speichern");
+		btnSave = new JButton("Speichern...");
 		panelNxtInputBottom.add(btnSave);
 		btnSave.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -434,6 +445,16 @@ public class NXTCommunicationFrame extends JFrame{
 		});
 		btnSave.setToolTipText("Speichert die oben stehenden Daten in eine Datei");
 		btnSave.setFocusPainted(false);
+		
+		btnClear = new JButton("L\u00F6schen");
+		panelNxtInputBottom.add(btnClear);
+		btnClear.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				textAreaNxtInput.setText("");
+			}
+		});
+		btnClear.setToolTipText("L\u00F6scht das obere Textfeld");
+		btnClear.setFocusPainted(false);
 		
 		popupMenu = new PopupMenu();
 		
@@ -562,6 +583,21 @@ public class NXTCommunicationFrame extends JFrame{
 	public void showWarning(){
 		lblWarning.setForeground(Color.RED);
 		lblWarning.setText("Obacht! Nicht �bertragene �nderungen!");
+	}
+	
+	private void loadLookAndFeels(){
+		ButtonGroup bg = new ButtonGroup();
+		
+		LookAndFeelActionListener listener = new LookAndFeelActionListener(this);
+		menuItemSystemLookAndFeel.addActionListener(listener);
+		bg.add(menuItemSystemLookAndFeel);
+		
+		LookAndFeelInfo[] lookAndFeels = UIManager.getInstalledLookAndFeels();
+		for(LookAndFeelInfo lookAndFeel: lookAndFeels){
+			LookAndFeelMenuItem item = new LookAndFeelMenuItem(lookAndFeel, listener);
+			mnView.add(item);
+			bg.add(item);
+		}
 	}
 	
 	private void addTextToTextPane(String str, Color color, String fontFamily){

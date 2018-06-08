@@ -9,6 +9,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 public class ExceptionParsingPopupMenu extends JPopupMenu{
 	
@@ -33,6 +34,7 @@ public class ExceptionParsingPopupMenu extends JPopupMenu{
 	}
 	
 	public void showAt(int x, int y){
+		SwingUtilities.updateComponentTreeUI(this);
 		show(textArea, x, y);
 	}
 	

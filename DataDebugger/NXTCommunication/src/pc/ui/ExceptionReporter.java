@@ -3,6 +3,7 @@ package pc.ui;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
+import javax.swing.SwingUtilities;
 
 import java.awt.Container;
 import java.awt.SystemColor;
@@ -141,6 +142,7 @@ public class ExceptionReporter extends JDialog{
 		}
 		reporter.displayException(exception);
 		reporter.setLocationRelativeTo(parent);
+		SwingUtilities.updateComponentTreeUI(reporter);
 		reporter.setVisible(true);
 	}
 }

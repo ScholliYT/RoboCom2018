@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JSeparator;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 
 import pc.object.SettingsManager;
 import pc.ui.Object.MyFileTableModel;
@@ -103,6 +104,7 @@ public class PopupMenu extends JPopupMenu{
 		itemDeleteRow.setEnabled(b);
 		itemEditCell.setEnabled(b);
 		itemEditRow.setEnabled(b);
+		SwingUtilities.updateComponentTreeUI(this);
 		show(table, x, y);
 	}
 	

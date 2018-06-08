@@ -10,6 +10,7 @@ import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JSpinner;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import pc.object.DataFieldType;
 
@@ -249,6 +250,7 @@ public class NewRowDialog extends JDialog{
 		
 		SINGLETONE.cbDataType.setSelectedIndex(index);
 		SINGLETONE.setLocationRelativeTo(parent);
+		SwingUtilities.updateComponentTreeUI(SINGLETONE);
 		SINGLETONE.setVisible(true);
 	}
 	
@@ -259,6 +261,7 @@ public class NewRowDialog extends JDialog{
 		SINGLETONE.setTitle("Neues Datenfeld erzeugen");
 		SINGLETONE.editMode = false;
 		SINGLETONE.setLocationRelativeTo(parent);
+		SwingUtilities.updateComponentTreeUI(SINGLETONE);
 		SINGLETONE.setVisible(true);
 	}
 }
