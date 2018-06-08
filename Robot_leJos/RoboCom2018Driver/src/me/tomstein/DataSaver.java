@@ -23,12 +23,17 @@ public class DataSaver{
 	
 	private DataSaver(){
 		try{
-			data.createNewFile();
-			loadSettings();
+			if(!data.exists()){
+				data.createNewFile();
+			}
 		}catch(Exception e){}
 	}
 	
 	public NxtDataField[] loadSettings() throws Exception{
+		if(data.length() <= 0){
+			return new NxtDataField[0];
+		}
+		
 		ArrayList<NxtDataField> loaded = new ArrayList<>();
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(data)));
