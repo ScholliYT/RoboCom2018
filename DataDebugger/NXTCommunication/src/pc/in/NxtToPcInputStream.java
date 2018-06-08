@@ -12,7 +12,6 @@ public class NxtToPcInputStream{
 	public NxtToPcInputStream(InputStream in){
 		this.raw = in;
 		this.reader = new InputStreamReader(raw);
-		
 	}
 	
 	public int read() throws IOException{

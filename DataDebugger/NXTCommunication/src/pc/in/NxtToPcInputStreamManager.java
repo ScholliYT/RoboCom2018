@@ -93,7 +93,6 @@ public class NxtToPcInputStreamManager extends Thread{
 						}else if(buffer.startsWith("shutdown")){
 							com.close(true);
 							input.close();
-							System.out.println("in closed!");
 							buffer = "";
 						}else{
 							frame.displayNxtInput(buffer.substring(0, buffer.length() - 1));

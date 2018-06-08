@@ -26,6 +26,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JSeparator;
 import javax.swing.UIManager;
 import java.awt.Color;
+import java.awt.Dimension;
 
 import javax.swing.JTextPane;
 import javax.swing.JMenu;
@@ -54,6 +55,11 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import javax.swing.JSplitPane;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 public class NXTCommunicationFrame extends JFrame{
 	
@@ -76,14 +82,24 @@ public class NXTCommunicationFrame extends JFrame{
 	private FileOutputStream fos;
 	private File logFile;
 	private boolean disposing;
-	private JLabel lblWarning;
 	private JPanel panelDataFields;
 	private JPanel panelNxtInput;
 	private MyTableCellRenderer renderer;
 	private JScrollPane scrollPaneNxtInput;
 	private JScrollPane scrollPaneTable;
+	private JSplitPane splitPane;
+	private JLabel lblWarning;
 	
 	public NXTCommunicationFrame(){
+		addComponentListener(new ComponentAdapter() {
+			@Override
+			public void componentResized(ComponentEvent e){
+				if(splitPane != null){
+					splitPane.setDividerLocation((int) (splitPane.getSize().getWidth()/2));
+//					splitPane.setDividerSize(0);
+				}
+			}
+		});
 		this.disposing = false;
 		this.settings = SettingsManager.getSingletone();
 		addWindowListener(new WindowAdapter(){
@@ -110,10 +126,10 @@ public class NXTCommunicationFrame extends JFrame{
 			}
 		});
 		setIconImage(Toolkit.getDefaultToolkit().getImage(NXTCommunicationFrame.class.getResource("/resources/icon_frame_128x200px.jpg")));
-		setResizable(false);
 		setTitle("NXT Kommunikation");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 828, 545);
+		setBounds(100, 100, 770, 500);
+		setMinimumSize(new Dimension(770, 500));
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -138,7 +154,9 @@ public class NXTCommunicationFrame extends JFrame{
 		mntmBeenden.setIcon(new ImageIcon(NXTCommunicationFrame.class.getResource("/resources/shutdown_icon_16px.png")));
 		mntmBeenden.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				com.close(true);
+				if(com != null && !com.isClosed()){
+					com.close(true);
+				}
 				System.exit(0);
 			}
 		});
@@ -239,95 +257,33 @@ public class NXTCommunicationFrame extends JFrame{
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
+		model = new MyFileTableModel(this);
+		renderer = new MyTableCellRenderer(model);
+		contentPane.setLayout(new BorderLayout(0, 0));
 		
-		panelNxtInput = new JPanel();
-		panelNxtInput.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "NXT-Input", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
-		panelNxtInput.setBounds(415, 5, 387, 485);
-		contentPane.add(panelNxtInput);
-		panelNxtInput.setLayout(null);
+		lblWarning = new JLabel("");
+		lblWarning.setHorizontalAlignment(SwingConstants.CENTER);
+		lblWarning.setForeground(Color.RED);
+		contentPane.add(lblWarning);
 		
-		btnClear = new JButton("L\u00F6schen");
-		btnClear.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				textAreaNxtInput.setText("");
-			}
-		});
-		btnClear.setToolTipText("L\u00F6scht das obere Textfeld");
-		btnClear.setFocusPainted(false);
-		btnClear.setBounds(306, 451, 71, 23);
-		panelNxtInput.add(btnClear);
+		splitPane = new JSplitPane();
+		splitPane.setResizeWeight(0.5);
+		splitPane.setOpaque(true);
+		splitPane.setBorder(null);
+		splitPane.setDividerSize(0);
 		
-		JSeparator separator_2 = new JSeparator();
-		separator_2.setBounds(10, 447, 367, 2);
-		panelNxtInput.add(separator_2);
-		
-		scrollPaneNxtInput = new JScrollPane();
-		scrollPaneNxtInput.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		scrollPaneNxtInput.setBounds(10, 21, 367, 419);
-		panelNxtInput.add(scrollPaneNxtInput);
-		
-		textAreaNxtInput = new JTextPane();
-		textAreaNxtInput.setToolTipText("Vom NXT \u00FCbertragene Debug-Daten");
-		textAreaNxtInput.setEditable(false);
-		scrollPaneNxtInput.setViewportView(textAreaNxtInput);
-		
-		btnSave = new JButton("Speichern");
-		btnSave.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
-				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				chooser.setDialogTitle("Eine Datei auswählen");
-				chooser.setApproveButtonText("Okay");
-				if(chooser.showDialog(NXTCommunicationFrame.this, null) == JFileChooser.APPROVE_OPTION){
-					File f = chooser.getSelectedFile();
-					try{
-						if(!f.exists()) f.createNewFile();
-						
-						if(f.canRead() && f.canWrite()){
-							FileOutputStream fos = new FileOutputStream(f);
-							fos.write(textAreaNxtInput.getText().getBytes());
-							fos.flush();
-							fos.close();
-						}
-						
-					}catch(Exception e1){
-						ExceptionReporter.showDialog(NXTCommunicationFrame.this, e1, true);
-					}
-				}
-			}
-		});
-		btnSave.setToolTipText("Speichert die oben stehenden Daten in eine Datei");
-		btnSave.setFocusPainted(false);
-		btnSave.setBounds(217, 451, 79, 23);
-		panelNxtInput.add(btnSave);
+		splitPane.setEnabled(false);
+		contentPane.add(splitPane);
 		
 		panelDataFields = new JPanel();
-		panelDataFields.setBounds(5, 5, 400, 485);
+		splitPane.setLeftComponent(panelDataFields);
 		panelDataFields.setBorder(new TitledBorder(null, "Datenfelder", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		contentPane.add(panelDataFields);
-		panelDataFields.setLayout(null);
-		
-		btnFireUpdate = new JButton("Fire Update");
-		btnFireUpdate.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				lblWarning.setForeground(Color.RED);
-				lblWarning.setText("Update ausstehend...");
-				uploadCurrentDatafields();
-				lblWarning.setForeground(Color.BLACK);
-				lblWarning.setText("Update erfolgreich ausgeführt.");
-			}
-		});
-		btnFireUpdate.setToolTipText("Updatet die oben eingestellten Datenfelder");
-		btnFireUpdate.setFocusPainted(false);
-		btnFireUpdate.setBounds(297, 451, 93, 23);
-		panelDataFields.add(btnFireUpdate);
+		panelDataFields.setLayout(new BorderLayout(0, 0));
 		
 		scrollPaneTable = new JScrollPane();
+		panelDataFields.add(scrollPaneTable, BorderLayout.CENTER);
 		scrollPaneTable.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPaneTable.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPaneTable.setBounds(10, 21, 380, 400);
-		panelDataFields.add(scrollPaneTable);
 		
 		table = new JTable();
 		table.addMouseMotionListener(new MouseMotionAdapter(){
@@ -367,10 +323,8 @@ public class NXTCommunicationFrame extends JFrame{
 		table.setSurrendersFocusOnKeystroke(true);
 		table.setRowHeight(table.getRowHeight() + 9);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		model = new MyFileTableModel(this);
 		table.setModel(model);
 		table.setDefaultEditor(Object.class, new DataFieldTypeCellEditor(this, model));
-		renderer = new MyTableCellRenderer(model);
 		table.setDefaultRenderer(Object.class, renderer);
 		table.getColumnModel().getColumn(0).setPreferredWidth(106);
 		table.getColumnModel().getColumn(1).setPreferredWidth(113);
@@ -379,7 +333,13 @@ public class NXTCommunicationFrame extends JFrame{
 		table.getTableHeader().setReorderingAllowed(false);
 		scrollPaneTable.setViewportView(table);
 		
+		JPanel panelTableBottom = new JPanel();
+		FlowLayout flowLayout_1 = (FlowLayout) panelTableBottom.getLayout();
+		flowLayout_1.setAlignment(FlowLayout.LEFT);
+		panelDataFields.add(panelTableBottom, BorderLayout.SOUTH);
+		
 		btnAddField = new JButton("Datenfeld hinzuf\u00FCgen");
+		panelTableBottom.add(btnAddField);
 		btnAddField.setToolTipText("F\u00FCgt dem NXT ein neues, \u00FCber den PC einstellbares, Datenfeld hinzu");
 		btnAddField.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
@@ -387,14 +347,9 @@ public class NXTCommunicationFrame extends JFrame{
 			}
 		});
 		btnAddField.setFocusPainted(false);
-		btnAddField.setBounds(10, 451, 135, 23);
-		panelDataFields.add(btnAddField);
-		
-		JSeparator separator_1 = new JSeparator();
-		separator_1.setBounds(10, 447, 380, 2);
-		panelDataFields.add(separator_1);
 		
 		btnLoadNxtSettings = new JButton("Load NXT-Settings");
+		panelTableBottom.add(btnLoadNxtSettings);
 		btnLoadNxtSettings.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				com.writeString("update");
@@ -404,18 +359,81 @@ public class NXTCommunicationFrame extends JFrame{
 		});
 		btnLoadNxtSettings.setToolTipText("Lie\u00DFt die aktuellen NXT-Datenfelder neu ein");
 		btnLoadNxtSettings.setFocusPainted(false);
-		btnLoadNxtSettings.setBounds(155, 451, 132, 23);
-		panelDataFields.add(btnLoadNxtSettings);
 		
-		lblWarning = new JLabel("");
-		lblWarning.setHorizontalAlignment(SwingConstants.CENTER);
-		lblWarning.setForeground(Color.RED);
-		lblWarning.setBounds(10, 426, 380, 14);
-		panelDataFields.add(lblWarning);
+		btnFireUpdate = new JButton("Fire Update");
+		panelTableBottom.add(btnFireUpdate);
+		btnFireUpdate.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				lblWarning.setForeground(Color.RED);
+				lblWarning.setText("Update ausstehend...");
+				uploadCurrentDatafields();
+				lblWarning.setForeground(Color.BLACK);
+				lblWarning.setText("Update erfolgreich ausgefï¿½hrt.");
+			}
+		});
+		btnFireUpdate.setToolTipText("Updatet die oben eingestellten Datenfelder");
+		btnFireUpdate.setFocusPainted(false);
 		
-		JSeparator separator = new JSeparator();
-		separator.setBounds(5, 486, 797, 2);
-		contentPane.add(separator);
+		panelNxtInput = new JPanel();
+		splitPane.setRightComponent(panelNxtInput);
+		panelNxtInput.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "NXT-Input", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panelNxtInput.setLayout(new BorderLayout(0, 0));
+		
+		JSeparator separator_2 = new JSeparator();
+		panelNxtInput.add(separator_2);
+		
+		scrollPaneNxtInput = new JScrollPane();
+		scrollPaneNxtInput.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+		panelNxtInput.add(scrollPaneNxtInput, BorderLayout.CENTER);
+		
+		textAreaNxtInput = new JTextPane();
+		textAreaNxtInput.setToolTipText("Vom NXT \u00FCbertragene Debug-Daten");
+		textAreaNxtInput.setEditable(false);
+		scrollPaneNxtInput.setViewportView(textAreaNxtInput);
+		
+		JPanel panelNxtInputBottom = new JPanel();
+		FlowLayout flowLayout = (FlowLayout) panelNxtInputBottom.getLayout();
+		flowLayout.setAlignment(FlowLayout.RIGHT);
+		panelNxtInput.add(panelNxtInputBottom, BorderLayout.SOUTH);
+		
+		btnClear = new JButton("L\u00F6schen");
+		panelNxtInputBottom.add(btnClear);
+		btnClear.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				textAreaNxtInput.setText("");
+			}
+		});
+		btnClear.setToolTipText("L\u00F6scht das obere Textfeld");
+		btnClear.setFocusPainted(false);
+		
+		btnSave = new JButton("Speichern");
+		panelNxtInputBottom.add(btnSave);
+		btnSave.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				JFileChooser chooser = new JFileChooser(System.getProperty("user.home"));
+				chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+				chooser.setDialogTitle("Eine Datei auswï¿½hlen");
+				chooser.setApproveButtonText("Okay");
+				if(chooser.showDialog(NXTCommunicationFrame.this, null) == JFileChooser.APPROVE_OPTION){
+					File f = chooser.getSelectedFile();
+					try{
+						if(!f.exists()) f.createNewFile();
+						
+						if(f.canRead() && f.canWrite()){
+							FileOutputStream fos = new FileOutputStream(f);
+							fos.write(textAreaNxtInput.getText().getBytes());
+							fos.flush();
+							fos.close();
+						}
+						
+					}catch(Exception e1){
+						ExceptionReporter.showDialog(NXTCommunicationFrame.this, e1, true);
+					}
+				}
+			}
+		});
+		btnSave.setToolTipText("Speichert die oben stehenden Daten in eine Datei");
+		btnSave.setFocusPainted(false);
 		
 		popupMenu = new PopupMenu();
 		
@@ -516,13 +534,13 @@ public class NXTCommunicationFrame extends JFrame{
 		if(table.getSelectedRows().length > 0){
 			int[] selected = table.getSelectedRows();
 			if(!settings.getDeleteRowsWithoutDialog()){
-				int dialogResult = JOptionPane.showConfirmDialog(NXTCommunicationFrame.this, "Möchten Sie die " + selected.length + " ausgewählten Einträge endgültig löschen?", "Datenfelder löschen?", JOptionPane.YES_NO_OPTION);
+				int dialogResult = JOptionPane.showConfirmDialog(NXTCommunicationFrame.this, "Mï¿½chten Sie die " + selected.length + " ausgewï¿½hlten Eintrï¿½ge endgï¿½ltig lï¿½schen?", "Datenfelder lï¿½schen?", JOptionPane.YES_NO_OPTION);
 				if(dialogResult != JOptionPane.OK_OPTION){
 					return;
 				}
 			}
 			
-			for(int i = selected.length - 1; i >= 0; i--){ //MUSS rückwärts laufen!
+			for(int i = selected.length - 1; i >= 0; i--){ //MUSS rï¿½ckwï¿½rts laufen!
 				model.deleteRow(selected[i]);
 			}
 			table.getSelectionModel().clearSelection();
@@ -543,7 +561,7 @@ public class NXTCommunicationFrame extends JFrame{
 	
 	public void showWarning(){
 		lblWarning.setForeground(Color.RED);
-		lblWarning.setText("Obacht! Nicht übertragene Änderungen!");
+		lblWarning.setText("Obacht! Nicht ï¿½bertragene ï¿½nderungen!");
 	}
 	
 	private void addTextToTextPane(String str, Color color, String fontFamily){
