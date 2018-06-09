@@ -6,11 +6,20 @@ import lejos.util.Delay;
 import nxt.connection.NxtDataField;
 import nxt.connection.PCCommunicationManager;
 
+/**
+ * Manages the Datainputstream and interprets the data sent by the PC
+ * @author Simon
+ */
 public class PcToNxtInputStreamManager extends Thread{
 	
 	private PCCommunicationManager parent;
 	private PCToNXTInputStream in;
 	
+	/**
+	 * @param com The NXTCommunication
+	 * @param parent the PCCommnicationManager for the current connection
+	 * @param in The "raw" InputStream for communicating with the PC
+	 */
 	public PcToNxtInputStreamManager(PCCommunicationManager parent, InputStream in){
 		this.parent = parent;
 		this.in = new PCToNXTInputStream(in);
@@ -58,6 +67,9 @@ public class PcToNxtInputStreamManager extends Thread{
 		}
 	}
 	
+	/**
+	 * Closes the underlying stream and interrupts this manager
+	 */
 	public void close(){
 		try{
 			in.close();

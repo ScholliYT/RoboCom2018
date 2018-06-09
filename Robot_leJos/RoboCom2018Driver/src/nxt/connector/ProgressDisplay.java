@@ -3,10 +3,18 @@ package nxt.connector;
 import lejos.nxt.LCD;
 import lejos.util.Delay;
 
+/**
+ * Shows the progress of the current connect-attempt on the NXT's LCD
+ * @author Simon
+ *
+ */
 public class ProgressDisplay extends Thread{
 	
 	private volatile boolean isConnected;
 	
+	/**
+	 * Create a new Progressdisplay
+	 */
 	public ProgressDisplay(){
 		this.setDaemon(true);
 		this.isConnected = false;
@@ -33,6 +41,9 @@ public class ProgressDisplay extends Thread{
 		LCD.clear();
 	}
 	
+	/**
+	 * Called, when an connection was established successfully
+	 */
 	public void connectionEstablished(){
 		this.isConnected = true;
 	}

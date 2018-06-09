@@ -3,7 +3,7 @@ package nxt.connection;
 import nxt.object.DataFieldType;
 
 /**
- * Stellt ein Datenfeld, welches vom PC geupdatet werden soll dar
+ * Represents a datafield, which should ne updated by the PC
  * @author Simon
  */
 public class NxtDataField{
@@ -13,7 +13,7 @@ public class NxtDataField{
 	private Object value;
 	
 	/**
-	 * Nicht manuell instanzieren!
+	 * Do not instantiate manually, it won't have the intended effect!
 	 */
 	@Deprecated
 	public NxtDataField(String name, DataFieldType type, String value){
@@ -45,7 +45,7 @@ public class NxtDataField{
 	}
 	
 	/**
-	 * Nicht manuell instanzieren!
+	 * Do not instantiate manually, it won't have the intended effect!
 	 */
 	public NxtDataField(String name, DataFieldType type, Object value){
 		this.name = name;
@@ -54,30 +54,27 @@ public class NxtDataField{
 	}
 	
 	/**
-	 * Gibt den Namen dieses Datenfeldes zurück
-	 * @return den Namen des Datenfeldes
+	 * returns the name of this datafield
+	 * @return the name of this datafield
 	 */
 	public String getName(){
 		return name;
 	}
 	
 	/**
-	 * Gibt den Datenfeldtyp dieses Datenfeldes zurück
-	 * @return den Datenfeldtyp {String, Integer, Long, Double, Float}
+	 * @return the DataFieldType {String, Integer, Long, Double, Float}
 	 */
 	public DataFieldType getType(){
 		return type;
 	}
 	
 	/**
-	 * Gibt den Datenfeldwert als Objekt zurück. Der tatsächliche Wert kann mithilfe von
-	 * explizitem casten ermittelt werden. Beispiel:<br>
+	 * Returns the Datafieldvalue as an object. The actual value can be archived with help of casting. Example:<br>
 	 * <code>Object datafield = getValue();<br>
 	 * if(datafield instanceof String){<br>
 	 * String result = (String) datafield;<br>
 	 * }<br></code>
-	 * usw...
-	 * @return den Datenfeldwert als Objekt
+	 * @return the value of this datafield as an object
 	 */
 	public Object getValue(){
 		return value;

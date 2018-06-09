@@ -8,6 +8,11 @@ import javax.swing.UIManager;
 
 import pc.ui.NXTCommunicationFrame;
 
+/**
+ * Implements an general ActionListener for all LookAndFeelMenuItems
+ * @author Simon
+ *
+ */
 public class LookAndFeelActionListener implements ActionListener{
 	
 	private NXTCommunicationFrame frame;
@@ -16,6 +21,10 @@ public class LookAndFeelActionListener implements ActionListener{
 		this.frame = frame;
 	}
 	
+	/**
+	 * Called, if an LookAndFeelMenuItem was clicked
+	 * @param e the Action that took place
+	 */
 	@Override
 	public void actionPerformed(ActionEvent e){
 		String className;

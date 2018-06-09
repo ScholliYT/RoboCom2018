@@ -13,7 +13,7 @@ public class ShutdownHook extends Thread{
 	
 	/**
 	 * Private constructor, use <code>addShutdownHook(NXTCommunication)</code> instead!
-	 * @param com
+	 * @param com the current NXTCommunication, we try to close after the application wished to exit
 	 */
 	private ShutdownHook(NXTCommunication com){
 		this.com = com;

@@ -1,5 +1,10 @@
 package nxt.object;
 
+/**
+ * Simple enumeration of all the data types I chose to allow for editing on the run
+ * @author Simon
+ *
+ */
 public enum DataFieldType{
 	
 	STRING,
@@ -9,6 +14,11 @@ public enum DataFieldType{
 	FLOAT,
 	BOOLEAN;
 	
+	/**
+	 * Returns a Datafieldtype from the given string. Example: "string" will return DataFieldType.STRING, "float" will return DataFieldType.FLOAT
+	 * @param type The type as String
+	 * @return the DataFieldType represented by the string, or as a default value DataFieldType.STRING
+	 */
 	public static DataFieldType getDataFieldTypeFromString(String type){
 		switch(type.trim().toLowerCase()){
 			case "string":
@@ -28,6 +38,11 @@ public enum DataFieldType{
 		}
 	}
 	
+	/**
+	 * Returns the actual Object from a given String
+	 * @param str the String that represents a object
+	 * @return the actual Object of a datafield
+	 */
 	public Object getObjectFromString(String str){
 		switch(this){
 			case STRING:
@@ -47,6 +62,11 @@ public enum DataFieldType{
 		}
 	}
 	
+	/**
+	 * Guesses the DataFieldType given by a Object
+	 * @param o the Object, from which this method tries to guess the Datafieldtype
+	 * @return a DataFieldType, or null, if there was no positive match
+	 */
 	public static DataFieldType guessDataFieldTypeFromObject(Object o){
 		if(o instanceof Integer){
 			return INTEGER;

@@ -154,6 +154,9 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 		this.value = "" + (Number) spinner.getValue();
 	}
 	
+	/**
+	 * Returns the proper Component to edit a specific cell (for DataFieldTypes a JComboBox, for example)u
+	 */
 	@Override
 	public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column){
 		this.currentRow = row;
@@ -231,6 +234,11 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 		}
 	}
 	
+	/**
+	 * Asks the editor if it can start editing using anEvent. anEvent is in the invoking component coordinate system. The editor can not assume 
+	 * the Component returned by getCellEditorComponent is installed. This method is intended for the use of client to avoid the cost of setting up and 
+	 * installing the editor component if editing is not possible. If editing can be started this method returns true.
+	 */
 	@Override
 	public boolean isCellEditable(EventObject e){
 		if(super.isCellEditable(e) && e instanceof MouseEvent){
@@ -242,6 +250,11 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 		return false;
 	}
 	
+	/**
+	 * Parses an Integer out of an Object
+	 * @param value the Object to be parsed
+	 * @return an Integer or 0 if something went wrong
+	 */
 	private int parseInt(Object value){
 		try{
 			return Integer.parseInt(value + "");
@@ -250,6 +263,11 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 		}
 	}
 	
+	/**
+	 * Parses an Long out of an Object
+	 * @param value the Object to be parsed
+	 * @return an Long or 0 if something went wrong
+	 */
 	private long parseLong(Object value){
 		try{
 			return Long.parseLong(value + "");
@@ -258,6 +276,11 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 		}
 	}
 	
+	/**
+	 * Parses an Float out of an Object
+	 * @param value the Object to be parsed
+	 * @return an Float or 0.0 if something went wrong
+	 */
 	private float parseFloat(Object value){
 		try{
 			return Float.parseFloat(value + "");
@@ -266,6 +289,11 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 		}
 	}
 	
+	/**
+	 * Parses an Double out of an Object
+	 * @param value the Object to be parsed
+	 * @return an Double or 0.0 if something went wrong
+	 */
 	private double parseDouble(Object value){
 		try{
 			return Double.parseDouble(value + "");
@@ -274,6 +302,11 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 		}
 	}
 	
+	/**
+	 * Makes sure, that a cell has a valid value after editing the DataFieldType
+	 * @param row the row, that needs to be checked
+	 * @param type the new type
+	 */
 	private void ensureValidValueAfterDatatypeChange(int row, DataFieldType type){
 		Object value = model.getValueAt(row, 2);
 		System.out.println("Alter Wert: " + value);
