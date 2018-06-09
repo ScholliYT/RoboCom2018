@@ -68,6 +68,12 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import javax.swing.JRadioButtonMenuItem;
 
+/**
+ * The Mainui for this Application. Lets the user interact with all datafields and edit them
+ * Also shows Strings sent by the NXT in order to debug the NXT's program
+ * @author Simon
+ *
+ */
 public class NXTCommunicationFrame extends JFrame{
 	
 	private static final long serialVersionUID = 3967436775678112075L;
@@ -100,11 +106,11 @@ public class NXTCommunicationFrame extends JFrame{
 	private JMenu mnView;
 	
 	public NXTCommunicationFrame(){
-		addComponentListener(new ComponentAdapter() {
+		addComponentListener(new ComponentAdapter(){
 			@Override
 			public void componentResized(ComponentEvent e){
 				if(splitPane != null){
-					splitPane.setDividerLocation((int) (splitPane.getSize().getWidth()/2));
+					splitPane.setDividerLocation((int) (splitPane.getSize().getWidth()/2)); //Making sure, that both sides of this Frame (the Table and the NXT-iput textarea) have 50% of the space
 				}
 			}
 		});
@@ -471,15 +477,30 @@ public class NXTCommunicationFrame extends JFrame{
 		}
 	}
 	
+	/**
+	 * Checks for a given DatafieldName to be available
+	 * @param name the name we wish to check
+	 * @return <code>true</code> if the datafield is available, <code>false</code> otherwise
+	 */
 	public boolean isDatafieldNameAvailable(String name){
 		return model.isDatafieldNameAvailable(name);
 	}
 	
+	/**
+	 * Adds a new row to the Datafieldtable
+	 * @param fieldName the name of the new datafield
+	 * @param type the datafieldtype for the new datafield
+	 * @param value the value of the new datafield
+	 */
 	public void addNewRow(String fieldName, DataFieldType type, Object value){
 		model.addRow(fieldName, type, value);
 		table.updateUI();
 	}
 	
+	/**
+	 * Writes a message to the current logfile, if this is enabled in the settings
+	 * @param message the message to write to the logfile
+	 */
 	private void writeDisplayMessageToLogFile(String message){
 		if(settings.getCreateLogFilesAutomatically()){
 			try{
@@ -490,12 +511,21 @@ public class NXTCommunicationFrame extends JFrame{
 		}
 	}
 	
+	/**
+	 * Displays a String sent by the NXT on our Frame and writes it to the logfile, if enabled
+	 * @param input the String sent by the NXT to be displayed on the frame
+	 */
 	public void displayNxtInput(String input){
 		String out = input + LINE_SEPARATOR;
 		writeDisplayMessageToLogFile(out);
 		addTextToTextPane(out, Color.BLACK, null);
 	}
 	
+	/**
+	 * Displays an error sent by the NXT on the frame, if enabled
+	 * the Exception will be parsed before it will be displayed
+	 * @param input the Exception sent by the NXT
+	 */
 	public void displayNxtErrorInput(String input){
 		String[] traces = input.substring(0, input.length()-1).split(";");
 		String buffer = "Auf dem NXT ist ein Fehler aufgetreten:" + LINE_SEPARATOR;
@@ -513,19 +543,37 @@ public class NXTCommunicationFrame extends JFrame{
 		writeDisplayMessageToLogFile(buffer);
 	}
 	
+	/**
+	 * Makes this frame ready to be used and gets the datafields the NXT
+	 * wants to get updated by this program
+	 * @param in The "raw" InputStream from the NXT
+	 * @param out The "raw" OutputStream to the NXT
+	 */
 	public void init(InputStream in, OutputStream out){
 		this.com = new NXTCommunication(in, out, this);
 		com.writeString("update");
 	}
 	
+	/**
+	 * Getter for our FileTableModel
+	 * @return The current FileTableMode we are using
+	 */
 	public MyFileTableModel getModel(){
 		return model;
 	}
 	
+	/**
+	 * Getter for our current JTable that is displaying our datafields
+	 * @return the current JTable
+	 */
 	public JTable getTable(){
 		return table;
 	}
 	
+	/**
+	 * Called automatically, when the connection was closed by the NXT, makes this application ready to exit, and exits is
+	 * @param closeApplication curently unused i guess
+	 */
 	public void onConnectionClosed(boolean closeApplication){
 		this.setVisible(!closeApplication);
 		if(!com.isClosed()){
@@ -534,10 +582,16 @@ public class NXTCommunicationFrame extends JFrame{
 		System.exit(0);
 	}
 	
+	/**
+	 * Uploads the current datafields on this PC to the NXT
+	 */
 	public void uploadCurrentDatafields(){
 		com.writeString(model.toString());
 	}
 	
+	/**
+	 * Shows the NewRowDialog in order to create a new datafield if enabled, or just adds a randomized entry to the table
+	 */
 	public void showAddNewRowDialog(){
 		if(settings.getCreateNewRowsWithDialog()){
 			NewRowDialog.showDialog(NXTCommunicationFrame.this);
@@ -547,10 +601,17 @@ public class NXTCommunicationFrame extends JFrame{
 		table.updateUI();
 	}
 	
+	/**
+	 * Shows a dialog to edit a row of the table
+	 * @param row the row to be edited
+	 */
 	public void showEditRowDialog(int row){
 		NewRowDialog.showDialog(this, (String) model.getValueAt(row, 0), (DataFieldType) model.getValueAt(row, 1), model.getValueAt(row, 2), row);
 	}
 	
+	/**
+	 * Deletes all selected rows from the table. If enabled, a dialog is shown to let the user confirm the deletion of all selected rows
+	 */
 	public void deleteSelectedRows(){
 		if(table.getSelectedRows().length > 0){
 			int[] selected = table.getSelectedRows();
@@ -576,15 +637,25 @@ public class NXTCommunicationFrame extends JFrame{
 		}
 	}
 	
+	/**
+	 * Just cancels the current edit-attempt on the table
+	 */
 	public void cancelCurrentTableEdit(){
 		table.editingCanceled(null);
 	}
 	
+	/**
+	 * Shows the warning, that there are not transmitted changes, that need to be sent over to the NXT
+	 * (Has currently no affect, because i removed the label, when i made this frame resizable and habe no idea, where i want to place this again
+	 */
 	public void showWarning(){
 		lblWarning.setForeground(Color.RED);
 		lblWarning.setText("Obacht! Nicht �bertragene �nderungen!");
 	}
 	
+	/**
+	 * Loads all available LookAndFeels and adds them to the Userinterface
+	 */
 	private void loadLookAndFeels(){
 		ButtonGroup bg = new ButtonGroup();
 		
@@ -600,6 +671,12 @@ public class NXTCommunicationFrame extends JFrame{
 		}
 	}
 	
+	/**
+	 * Adds a String to the textpane
+	 * @param str the String to be added
+	 * @param color the color that the String should be displayed with
+	 * @param fontFamily the Font for the new Text in the pane
+	 */
 	private void addTextToTextPane(String str, Color color, String fontFamily){
 		StyledDocument doc = textAreaNxtInput.getStyledDocument();
 		

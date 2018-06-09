@@ -18,7 +18,12 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-
+/**
+ * The Celleditor for our Table in the Main-UI. In order to learn what a celleditor is, please read the documentation of
+ * {@link AbstractCellEditor}. Implements various interfaces, in order to make sure, that the table can be edited correctly
+ * TODO Richtig dokumentieren
+ * @author Simon
+ */
 public class DataFieldTypeCellEditor extends AbstractCellEditor implements TableCellEditor, ActionListener, ChangeListener, DocumentListener{
 	
 	private static final long serialVersionUID = -6016733647582631554L;
@@ -31,11 +36,19 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 	
 	private int currentRow, currentColumn;
 	
+	/**
+	 * Create a DataFieldTypeCellEditor
+	 * @param frame The Mainui
+	 * @param model the current table model in order to update rows
+	 */
 	public DataFieldTypeCellEditor(NXTCommunicationFrame frame, MyFileTableModel model){
 		this.frame = frame;
 		this.model = model;
 	}
 	
+	/**
+	 * Returns the new value for an edited cell
+	 */
 	@Override
 	public Object getCellEditorValue(){
 		Object result = null;
@@ -68,6 +81,9 @@ public class DataFieldTypeCellEditor extends AbstractCellEditor implements Table
 		return result;
 	}
 	
+	/**
+	 * Called, when an object was interacted with.
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void actionPerformed(ActionEvent e){

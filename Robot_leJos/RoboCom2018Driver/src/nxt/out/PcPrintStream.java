@@ -32,7 +32,7 @@ public class PcPrintStream extends PrintStream{
 	}
 	
 	@Override
-	public void println(char[] v) {
+	public void println(char[] v){
 		if(lcd){
 			try{
 				lcdOut.write((String.valueOf(v) + "\n").getBytes());

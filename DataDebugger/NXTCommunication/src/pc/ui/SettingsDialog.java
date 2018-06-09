@@ -25,6 +25,11 @@ import java.awt.Toolkit;
 import java.awt.event.WindowFocusListener;
 import java.awt.event.WindowEvent;
 
+/**
+ * The Userinterface to let the user interact with the {@link SettingsManager}
+ * @author Simon
+ *
+ */
 public class SettingsDialog extends JDialog{
 	
 	private static final long serialVersionUID = 8837043242901482204L;
@@ -54,6 +59,9 @@ public class SettingsDialog extends JDialog{
 	
 	private ExceptionParsingDialog dialogExceptionParsing;
 	
+	/**
+	 * Create the dialog
+	 */
 	public SettingsDialog(){
 		addWindowFocusListener(new WindowFocusListener() {
 			public void windowGainedFocus(WindowEvent e){
@@ -349,6 +357,9 @@ public class SettingsDialog extends JDialog{
 		loadCurrentSettings();
 	}
 	
+	/**
+	 * Loads the current settings into this dialog
+	 */
 	private void loadCurrentSettings(){
 		settings.reload();
 		chckbxSaveNewSettingsDirectly.setSelected(settings.getAutmaticallySaveSettings());
@@ -370,6 +381,10 @@ public class SettingsDialog extends JDialog{
 		this.dialogExceptionParsing.parseRawData(settings.getRecentExceptionParsingData());
 	}
 	
+	/**
+	 * Shows this dialog at the relative location to the parent
+	 * @param parent parent of this dialog, in order to place it relative to it
+	 */
 	public static void showDialog(NXTCommunicationFrame parent){
 		if(SINGLETONE == null){
 			SINGLETONE = new SettingsDialog();
@@ -379,10 +394,16 @@ public class SettingsDialog extends JDialog{
 		SINGLETONE.setVisible(true);
 	}
 	
+	/**
+	 * Loads this dialog
+	 */
 	public static void load(){
 		ensureSingletoneExists();
 	}
 	
+	/**
+	 * Makes sure, that there is one instance of this class available
+	 */
 	private static void ensureSingletoneExists(){
 		if(SINGLETONE == null){
 			SINGLETONE = new SettingsDialog();

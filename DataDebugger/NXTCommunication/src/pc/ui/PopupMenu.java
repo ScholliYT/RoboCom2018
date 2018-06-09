@@ -15,6 +15,11 @@ import javax.swing.SwingUtilities;
 import pc.object.SettingsManager;
 import pc.ui.Object.MyFileTableModel;
 
+/**
+ * The default PopupMenu for our datafieldtable
+ * @author Simon
+ *
+ */
 public class PopupMenu extends JPopupMenu{
 	
 	private static final long serialVersionUID = -4279358223838574754L;
@@ -25,6 +30,9 @@ public class PopupMenu extends JPopupMenu{
 	
 	private JMenuItem itemUpload, itemEditCell, itemDeleteRow, itemAddRow, itemEditRow;
 	
+	/**
+	 * Create the PopupMenu
+	 */
 	public PopupMenu(){
 		this.clickLocation = null;
 		itemUpload = new JMenuItem("Datenfelder uploaden");
@@ -95,7 +103,13 @@ public class PopupMenu extends JPopupMenu{
 		pack();
 	}
 	
-	
+	/**
+	 * Used to show this PopupMenu, when it is requested
+	 * @param x the x-coordinate, where this popupmenu should be popping up
+	 * @param y the y-coordinate, where this popupmenu should be popping up
+	 * @param frame the Mainframe, on which this needs to be displayed
+	 * @param table the table, on witch this should be displayed
+	 */
 	public void showAt(NXTCommunicationFrame frame, JTable table, int x, int y){
 		this.frame = frame;
 		this.clickLocation = new Point(x, y);
@@ -108,6 +122,9 @@ public class PopupMenu extends JPopupMenu{
 		show(table, x, y);
 	}
 	
+	/**
+	 * Hides this PopupMenu
+	 */
 	public void hidePopup(){
 		this.setVisible(false);
 	}

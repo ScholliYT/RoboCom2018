@@ -18,6 +18,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Toolkit;
 
+/**
+ * A dialog to create a new datafield on this pc
+ * @author Simon
+ */
 public class NewRowDialog extends JDialog{
 	
 	private static final long serialVersionUID = -4502546001590783751L;
@@ -32,10 +36,14 @@ public class NewRowDialog extends JDialog{
 	private JSpinner spinner;
 	private SpinnerNumberModel modelInteger, modelLong, modelFloat, modelDouble;
 	
-	private boolean editMode;
+	private boolean editMode; //idicates, if this dialog is currently used to edit an existing datafield or 
 	private int row;
 	private JComboBox<String> cbBooleans;
 	
+	/**
+	 * Create a new Dialog
+	 * @param parent
+	 */
 	public NewRowDialog(NXTCommunicationFrame parent){
 		this.row = -1;
 		this.editMode = false;
@@ -201,6 +209,15 @@ public class NewRowDialog extends JDialog{
 		
 	}
 	
+	/**
+	 * Shows this dialog and sets it to edit-mode
+	 * @param parent The parent component (usually NXTCommunication frame)
+	 * @param name The current name of the datafield
+	 * @param type The current type of the datafield
+	 * @param value the current value of the datafield
+	 * @param row the row we are editing
+	 * @throws NumberFormatException If something wents wrong
+	 */
 	public static void showDialog(NXTCommunicationFrame parent, String name, DataFieldType type, Object value, int row) throws NumberFormatException{
 		if(SINGLETONE == null){
 			SINGLETONE = new NewRowDialog(parent);
@@ -254,6 +271,10 @@ public class NewRowDialog extends JDialog{
 		SINGLETONE.setVisible(true);
 	}
 	
+	/**
+	 * Shows this dialog in order to create a new datafield on this PC
+	 * @param parent The parent (usually NXTCommunicationframe)
+	 */
 	public static void showDialog(NXTCommunicationFrame parent){
 		if(SINGLETONE == null){
 			SINGLETONE = new NewRowDialog(parent);

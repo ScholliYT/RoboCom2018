@@ -18,6 +18,11 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.Toolkit;
 
+/**
+ * Dialog to let the user know that something went terribly wrong
+ * (this is for Exceptions of this program, not for exceptions thrown by the NXT)
+ * @author Simon
+ */
 public class ExceptionReporter extends JDialog{
 	
 	private static final long serialVersionUID = 7238495030993495532L;
@@ -27,6 +32,9 @@ public class ExceptionReporter extends JDialog{
 	private JButton btnShutdown;
 	private JButton btnContinue;
 	
+	/**
+	 * Create the dialog
+	 */
 	public ExceptionReporter(){
 		setIconImage(Toolkit.getDefaultToolkit().getImage(ExceptionReporter.class.getResource("/resources/exception_icon_16px.png")));
 		addWindowListener(new WindowAdapter(){
@@ -110,6 +118,10 @@ public class ExceptionReporter extends JDialog{
 		
 	}
 	
+	/**
+	 * Displays an given Exception in this dialog
+	 * @param ext the exception to show
+	 */
 	private void displayException(Exception ex){
 		tfException.setText("");
 		tfException.append(ex.getClass().getName() + ": " + ex.getLocalizedMessage() + "\n");
@@ -129,6 +141,12 @@ public class ExceptionReporter extends JDialog{
 		
 	}
 	
+	/**
+	 * Show this dialog, and let the user know, what just went wrong
+	 * @param parent The parent of this dialog (usually the Main-UI)
+	 * @param exception The exception to display
+	 * @param criticalError indicates, whether the exception was critical and the program needs to be restarted
+	 */
 	public static void showDialog(Container parent, Exception exception, boolean criticalError){
 		ExceptionReporter reporter = new ExceptionReporter();
 		if(criticalError){

@@ -22,25 +22,34 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.ScrollPaneConstants;
 
+/**
+ * Lets the user enter the data he got by the link-verbose option, to make the data more readable<br>
+ * From here on, I will not comment every single line, everything should be covered in the previus two frames
+ * @author Simon
+ *
+ */
 public class ExceptionParsingDialog extends JDialog{
 	
-	private static ExceptionParsingDialog SINGLETONE;
+	private static ExceptionParsingDialog SINGLETONE; //Just one instance
 	
-	private static final long serialVersionUID = -4940201110897027396L;
-	private JTable tableData;
-	private TableColumnModel modelColumn;
+	private static final long serialVersionUID = -4940201110897027396L; //Just here to remove an annoying warning of eclipse
+	private JTable tableData; //The table, which lets the user check the data he/she just added
+	private TableColumnModel modelColumn; //The tablecolumnmodel for the table
 	
-	private HashMap<Integer, String> classes, methods;
-	private JTextArea textAreaInput;
-	private JButton btnAcceptData;
-	private ExceptionParsingPopupMenu popup;
+	private HashMap<Integer, String> classes, methods; //Two HashMaps, one for classes and one for methods
+	private JTextArea textAreaInput; //The JTextarea, used by the user to just copy the data he/she got by link-verbose into this program
+	private JButton btnAcceptData; //Button to resolve the data of the textArea
+	private ExceptionParsingPopupMenu popup; //The popupmenu which makes it easier to copy the pasted data into the textarea
 	
-	private SettingsManager settings;
-	private JButton btnSaveChanges;
+	private SettingsManager settings; //Current settings
+	private JButton btnSaveChanges; //Button to accept the data that was added and to save it
 	
+	/**
+	 * Create the dialog, not accessable from outside
+	 */
 	private ExceptionParsingDialog(){
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
-		setAlwaysOnTop(true);
+		setAlwaysOnTop(true); //This frame will be always on top of our application
 		setModalityType(ModalityType.APPLICATION_MODAL);
 		setType(Type.POPUP);
 		this.settings = SettingsManager.getSingletone();
@@ -56,7 +65,7 @@ public class ExceptionParsingDialog extends JDialog{
 		getContentPane().add(scrollPane_1);
 		
 		textAreaInput = new JTextArea();
-		textAreaInput.addMouseListener(new MouseAdapter(){
+		textAreaInput.addMouseListener(new MouseAdapter(){ //Mouselistener, used to show our popupmenu
 			@Override
 			public void mouseClicked(MouseEvent e){
 				fireEvent(e);
@@ -70,9 +79,13 @@ public class ExceptionParsingDialog extends JDialog{
 				fireEvent(e);
 			}
 			
+			/**
+			 * Fires the event, because different operating systems have different triggers for popupmenus
+			 * @param e the MouseEvent that was fired
+			 */
 			private void fireEvent(MouseEvent e){
-				if(e.isPopupTrigger()){
-					popup.showAt(e.getX(), e.getY());
+				if(e.isPopupTrigger()){ //Check if the action is the popupmenu trigger for the operating system
+					popup.showAt(e.getX(), e.getY()); //Show the dialog on the screen where the mouse currently is
 				}
 			}
 			
@@ -85,16 +98,16 @@ public class ExceptionParsingDialog extends JDialog{
 		scrollPane.setBounds(370, 9, 350, 480);
 		getContentPane().add(scrollPane);
 		
-		tableData = new JTable(){
+		tableData = new JTable(){ //A customized table
 			private static final long serialVersionUID = -6818092493009683656L;
 			@Override
-			public boolean isCellEditable(int row, int column){
+			public boolean isCellEditable(int row, int column){ //Make the table non-editable
 				return false;
 			}
 		};
 		tableData.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		tableData.setDefaultRenderer(Object.class, new ExceptionParsingTableCellRenderer());
-		tableData.setModel(new DefaultTableModel(
+		tableData.setDefaultRenderer(Object.class, new ExceptionParsingTableCellRenderer()); //Setting a custom renderer for the table
+		tableData.setModel(new DefaultTableModel( //Set the Model, in this case, just add two columns
 			new Object[][] {
 			},
 			new String[] {
@@ -102,8 +115,8 @@ public class ExceptionParsingDialog extends JDialog{
 			}
 		));
 		tableData.setAutoCreateColumnsFromModel(false);
-		tableData.setRowSelectionAllowed(false);
-		tableData.getTableHeader().setReorderingAllowed(false);
+		tableData.setRowSelectionAllowed(false); //Disable selection for this table
+		tableData.getTableHeader().setReorderingAllowed(false); //Disable reordering of the tablecolumns
 		modelColumn = tableData.getColumnModel();
 		scrollPane.setViewportView(tableData);
 		
@@ -114,7 +127,7 @@ public class ExceptionParsingDialog extends JDialog{
 		btnAcceptData.setFocusPainted(false);
 		btnAcceptData.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				ExceptionParsingDialog.this.parseRawData(textAreaInput.getText().split("\n"));
+				ExceptionParsingDialog.this.parseRawData(textAreaInput.getText().split("\n")); //Parse the raw data the user entered and prepare them to be used by this program
 			}
 		});
 		
@@ -137,6 +150,10 @@ public class ExceptionParsingDialog extends JDialog{
 		parseRawData(settings.getRecentExceptionParsingData().split("\n"));
 	}
 	
+	/**
+	 * Parses raw Data into data that can be used to parse exceptions sent by the NXT
+	 * @param rawData The raw link-verbose output, split at any newline character (usually '\n')
+	 */
 	public void parseRawData(String[] rawData){
 		try{
 			for(String s: rawData){
@@ -177,6 +194,11 @@ public class ExceptionParsingDialog extends JDialog{
 		}
 	}
 	
+	/**
+	 * Resolve an incoming exception from the NXT to an readable Exception
+	 * @param exceptionLines the "raw" LeJos-NXT exception
+	 * @return The resolved exception, as String[] (each entry is one line)
+	 */
 	public String[] parseException(String[] exceptionLines){
 		String buffer = "";
 		for(int i = 0; i < exceptionLines.length; i++){
@@ -196,10 +218,17 @@ public class ExceptionParsingDialog extends JDialog{
 		return exceptionLines;
 	}
 	
+	/**
+	 * Parse the raw data of the link-verbose option, without the data beeing split at any new line char
+	 * @param data
+	 */
 	public void parseRawData(String data){
 		this.parseRawData(data.split("\n"));
 	}
 	
+	/**
+	 * Adjust the columnsize of the table's columns to an optimal size
+	 */
 	public void adjustTablesizeToContent(){
 		tableData.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		int maxWidth = 0;
@@ -216,7 +245,10 @@ public class ExceptionParsingDialog extends JDialog{
 	}
 	
 	
-	
+	/**
+	 * Get this dialog in order to to stuff with it
+	 * @return
+	 */
 	public static ExceptionParsingDialog getSingletone(){
 		if(SINGLETONE == null){
 			SINGLETONE = new ExceptionParsingDialog();

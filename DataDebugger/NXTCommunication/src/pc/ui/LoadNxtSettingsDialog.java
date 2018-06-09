@@ -14,13 +14,20 @@ import java.awt.Container;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
+/**
+ * Dialog, that lets the user know, that we are currently waiting for the NXT to update our local datafields
+ * @author Simon
+ */
 public class LoadNxtSettingsDialog extends JDialog{
 	
 	private static final long serialVersionUID = 6178518182675913635L;
 	
 	private static LoadNxtSettingsDialog SINGLETONE;
 	
-	public LoadNxtSettingsDialog() {
+	/**
+	 * Create the dialog
+	 */
+	public LoadNxtSettingsDialog(){
 		setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
 		setModalityType(ModalityType.APPLICATION_MODAL);
@@ -64,6 +71,10 @@ public class LoadNxtSettingsDialog extends JDialog{
 		getContentPane().add(btnAbbrechen);
 	}
 	
+	/**
+	 * Show the dialog at a relative location to our parent
+	 * @param parent the Container this dialog should be located relative to
+	 */
 	public static void showDialogAt(Container parent){
 		if(SINGLETONE == null){
 			SINGLETONE = new LoadNxtSettingsDialog();
@@ -73,6 +84,9 @@ public class LoadNxtSettingsDialog extends JDialog{
 		SINGLETONE.setVisible(true);
 	}
 	
+	/**
+	 * Hides this dialog
+	 */
 	public static void hideDialog(){
 		if(SINGLETONE == null){
 			return;
