@@ -403,7 +403,7 @@ public class NXTCommunicationFrame extends JFrame{
 		
 		panelNxtInput = new JPanel();
 		splitPane.setRightComponent(panelNxtInput);
-		panelNxtInput.setBorder(new TitledBorder(UIManager.getBorder("TitledBorder.border"), "NXT-Input", TitledBorder.LEFT, TitledBorder.TOP, null, new Color(0, 0, 0)));
+		panelNxtInput.setBorder(new TitledBorder(null, "NXT-Input", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		panelNxtInput.setLayout(new BorderLayout(0, 0));
 		
 		JSeparator separator_2 = new JSeparator();
@@ -691,4 +691,13 @@ public class NXTCommunicationFrame extends JFrame{
 			textAreaNxtInput.setCaretPosition(textAreaNxtInput.getDocument().getLength());
 		}
 	}
+	
+	/**
+	 * Getter for the Splitpane
+	 * @return the current splitpane, which holds all our ui-objects
+	 */
+	public JSplitPane getSplitPane(){
+		return splitPane;
+	}
+	
 }

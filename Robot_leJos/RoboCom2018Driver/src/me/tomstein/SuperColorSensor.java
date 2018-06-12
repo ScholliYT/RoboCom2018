@@ -1,6 +1,5 @@
 package me.tomstein;
 
-import lejos.nxt.ColorSensor;
 import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 

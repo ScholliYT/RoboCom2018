@@ -40,6 +40,7 @@ public class LookAndFeelActionListener implements ActionListener{
 		}catch(Exception ex){
 			ex.printStackTrace();
 		}
+		frame.getSplitPane().setBorder(null);
 	}
 	
 }

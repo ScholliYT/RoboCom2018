@@ -252,14 +252,14 @@ public class SettingsDialog extends JDialog{
 		panelNxtDebugging.add(chckbxAutomaticallyCreateLogs);
 		
 		JLabel lblLogSavePath = new JLabel("Log-Speicherort:");
-		lblLogSavePath.setBounds(16, 53, 80, 14);
+		lblLogSavePath.setBounds(16, 53, 91, 14);
 		panelNxtDebugging.add(lblLogSavePath);
 		
 		txtUserhome = new JTextField();
 		txtUserhome.setToolTipText("Speicherort f\u00FCr die Logdateien der vom NXT \u00FCbertragenen Daten");
 		txtUserhome.setEditable(false);
 		txtUserhome.setText(System.getProperty("user.home") + "\\nxt\\");
-		txtUserhome.setBounds(106, 50, 308, 20);
+		txtUserhome.setBounds(119, 50, 295, 23);
 		panelNxtDebugging.add(txtUserhome);
 		txtUserhome.setColumns(10);
 		

@@ -29,8 +29,9 @@ public class RoboComDriver implements ButtonListener{
 	private DataOutputStream dos; // Stream for data going out to the NXT_ARM
 	
 	private final int OK_RECIEVED = 200;
-	private final int START_LIFTING = 10;
-	private final float STOP_DISTANCE = 15; // Distance to the tennis ball when stop lineFollowing
+//	private final int START_LIFTING = 10;
+	private final int STOP_DISTANCE = 25; // Distance to the tennis ball when stop lineFollowing
+	private final int MEASUREMENT_COUNT = 5; //Count of Distancemeasurements the program is using to compensate for mistakes
 	
 	// Start Constants for the lineFollowing
 	private int speed = 50;
@@ -43,19 +44,27 @@ public class RoboComDriver implements ButtonListener{
 	// End Constants for the lineFollowing
 	private PCCommunicationManager man;
 	
-	private int[] array = new int[] {255, 255, 255};
+	private int[] ultrasonicMeasurements;
 	
 	private static final boolean DEBUG_ENABLED = true;
 	
 	public static void main(String[] args){
+		Sound.setVolume(100);
 		new RoboComDriver();
 	}
 
 	public RoboComDriver(){
+		this.ultrasonicMeasurements = new int[MEASUREMENT_COUNT];
+		
+		for(int i = 0; i < ultrasonicMeasurements.length; i++){
+			ultrasonicMeasurements[i] = 255;
+		}
+		
 		Button.ESCAPE.addButtonListener(this);
 		Button.RIGHT.addButtonListener(this);
 		Button.LEFT.addButtonListener(this);
 		this.loadSettings();
+		
 		if(DEBUG_ENABLED){
 			PCConnector connector = new PCConnector(ConnectionType.BLUETOOTH, true, true, "speed", speed, "kp", kp, "ki", ki, "kd", kd, "delay", delay, "aussenmotorfaktor", aussenmotorfaktor);
 			man = connector.attemptConnection();
@@ -72,11 +81,11 @@ public class RoboComDriver implements ButtonListener{
 		ultrasonicSensor = new UltrasonicSensor(SensorPort.S2);
 		ultrasonicSensor.continuous();
 		
-		 setupRS485Connection();
+		setupRS485Connection();
 		// LCD.drawString("Linienverfolgung", 0, 5);
 		lineFollower();
 		// LCD.drawString("DONE", 0, 6);
-		 closeRS485Connection();
+		closeRS485Connection();
 	}
 
 	private void setupRS485Connection(){
@@ -112,7 +121,7 @@ public class RoboComDriver implements ButtonListener{
 	}
 
 	/*
-	 * Send a int to the NXT_ARM. returns true if the sending was succsessfull.
+	 * Send a int to the NXT_ARM. returns true if the sending was successfull.
 	 * Otherwise it returns false.
 	 */
 	private boolean sendToNXT_ARM(int i){
@@ -146,18 +155,34 @@ public class RoboComDriver implements ButtonListener{
 			return false;
 		}
 	}
-
-	private boolean ballIsInRange(){
-		array[2] = array[1];
-		array[1] = array[0];
-		array[0] = ultrasonicSensor.getDistance();
-		
-		int avg = (array[0] + array[1] + array[2]) / 3;
-		
-		return avg <= 25;
+	
+	private void arrayDurchschieben(int add){
+		for(int j = (ultrasonicMeasurements.length-1); j > 0; j--){
+			ultrasonicMeasurements[j] = ultrasonicMeasurements[j-1];
+		}
+		ultrasonicMeasurements[0] = add;
 	}
 	
-	public void calibrateLightSensor(int measurements){
+	private boolean isBallInRange(){
+		arrayDurchschieben(ultrasonicSensor.getDistance());
+		int count = 0;
+		for(int x: ultrasonicMeasurements){
+			count += x;
+		}
+		return (count / MEASUREMENT_COUNT) <= STOP_DISTANCE;
+	}
+	
+//	private boolean oldBallInRange(){
+//		array[2] = array[1];
+//		array[1] = array[0];
+//		array[0] = ultrasonicSensor.getDistance();
+//		
+//		int avg = (array[0] + array[1] + array[2]) / 3;
+//		
+//		return avg <= 25;
+//	}
+	
+	private void calibrateLightSensor(int measurements){
 		ArrayList<Integer> weis = new ArrayList<>();
 		ArrayList<Integer> schwarz = new ArrayList<>();
 		
@@ -204,7 +229,7 @@ public class RoboComDriver implements ButtonListener{
 		int lasterror = 0;
 		long time;
 		int count = 0;
-		while(!ballIsInRange()){ // Solange ausführen, bis der der Ball gefunden ist
+		while(!isBallInRange()){ // Solange ausführen, bis der der Ball gefunden ist
 			time = System.currentTimeMillis();
 			int readValue = lightsensor.getLightValue(); // Atuellen Wert des Lichtsensors einlesen
 			//System.out.println("Measuered: " + readValue);
@@ -213,7 +238,6 @@ public class RoboComDriver implements ButtonListener{
 			
 			if(error <= 1 && error >= -1){ // Auf der Kante
 				integral = 0; // Integral zurücksetzen
-				
 			}
 			
 			integral += error;
@@ -288,7 +312,7 @@ public class RoboComDriver implements ButtonListener{
 			for(NxtDataField df: DataSaver.getSingletone().loadSettings()){
 				interpretAndSetDatafield(df);
 			}
-		}catch(Exception e){
+		}catch(Exception ignore){
 //			e.printStackTrace();
 		}
 	}

@@ -35,7 +35,7 @@ public class Main{
 		//Create and show the ConnectToNxtDialog
 		ConnectToNxtDialog dialog = new ConnectToNxtDialog(frame);
 		dialog.setLocationRelativeTo(null);
-		dialog.setVisible(true);
+//		dialog.setVisible(true);
 		
 		//While there is no connection (dialog is still visble) just spin
 		while(dialog.isVisible()){
