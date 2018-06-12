@@ -37,11 +37,12 @@ public class DataSaver{
 		ArrayList<NxtDataField> loaded = new ArrayList<>();
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(data)));
-		String buffer;
+		String buffer = "";
 		while((buffer = br.readLine()) != null && !buffer.isEmpty()){
+			if(buffer.isEmpty()) break;
 			String name = buffer.substring(0, buffer.indexOf('='));
-			DataFieldType type = DataFieldType.getDataFieldTypeFromString(buffer.substring(buffer.indexOf('='), buffer.indexOf('&')));
-			String valueAsString = buffer.substring(buffer.indexOf('&'));
+			DataFieldType type = DataFieldType.getDataFieldTypeFromString(buffer.substring(buffer.indexOf('=')+1, buffer.indexOf('&')));
+			String valueAsString = buffer.substring(buffer.indexOf('&')+1);
 			Object value = null;
 			switch(type){
 				case STRING:
@@ -62,6 +63,9 @@ public class DataSaver{
 				case BOOLEAN:
 					value = Boolean.parseBoolean(valueAsString);
 					break;
+				default:
+					value = valueAsString;
+					break;
 			}
 			loaded.add(new NxtDataField(name, type, value));
 		}
@@ -70,6 +74,8 @@ public class DataSaver{
 	}
 	
 	public void saveData(Object... toSave) throws IOException{
+		data.delete();
+		data.createNewFile();
 		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(data)));
 		for(NxtDataField field: validateDatafields(toSave)){
 			writer.write(field.getName() + "=" + field.getType().toString() + "&" + field.getValue().toString());

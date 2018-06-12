@@ -85,4 +85,24 @@ public enum DataFieldType{
 		}
 	}
 	
+	@Override
+	public String toString(){
+		switch(this){
+		case INTEGER:
+			return "integer";
+		case LONG:
+			return "long";
+		case DOUBLE:
+			return "double";
+		case FLOAT:
+			return "float";
+		case STRING:
+			return "string";
+		case BOOLEAN:
+			return "boolean";
+		default:
+			return "integer";
+		}
+	}
+	
 }

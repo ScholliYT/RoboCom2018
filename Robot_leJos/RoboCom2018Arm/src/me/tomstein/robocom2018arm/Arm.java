@@ -31,7 +31,7 @@ public class Arm {
 		motor = Motor.A;
 		this.connect();
 	}
-
+	
 	private void connect() {
 		LCD.drawString("Waiting: ", 0, 1);
 		NXTConnection con = RS485.getConnector().waitForConnection(0, NXTConnection.PACKET);
@@ -44,14 +44,13 @@ public class Arm {
 			
 			try {
 				n = dis.readInt();
-				break;
 			} catch (IOException e) {
 				break;
 			}
 		}
 		LCD.drawString("Read: " + n, 0, 4);
 		if(n==1) {
-			motor.rotate(25 * 360);
+			motor.rotate(9 * 360);
 			try {
 				dos.writeInt(200);
 			} catch (IOException e) {

@@ -20,6 +20,7 @@ public class RoboComDriver implements ButtonListener{
 	
 	private GoodMotor motorL, motorR;
 	private SuperColorSensor lightsensor;
+//	private LightSensor lightsensor;
 	private UltrasonicSensor ultrasonicSensor;
 	
 	private NXTConnection connectionToNXT_ARM;
@@ -33,48 +34,49 @@ public class RoboComDriver implements ButtonListener{
 	
 	// Start Constants for the lineFollowing
 	private int speed = 50;
-	private int delay = 20;
-	private float kp = 1.2f;
-	private float ki = 0.1f;
-	private float kd = 1.0f;
-	private float aussenmotorfaktor = 1.05F;
+	private int delay = 5;
+	private float kp = 0.6f;
+	private float ki = 0.0005f;
+	private float kd = 0.5F;
+	private float aussenmotorfaktor = 1.00F;
 	private int integral = 0;
 	// End Constants for the lineFollowing
 	private PCCommunicationManager man;
 	
+	private int[] array = new int[] {255, 255, 255};
+	
 	private static final boolean DEBUG_ENABLED = true;
 	
 	public static void main(String[] args){
-		PCCommunicationManager man;
-		if(DEBUG_ENABLED){
-			PCConnector connector = new PCConnector(ConnectionType.BLUETOOTH, true, true, "speed", 50, "kp", 1.2F, "ki", 0.1F, "kd", 1.0F, "delay", 20, "aussenmotorfaktor", 1.05F);
-			man = connector.attemptConnection();
-			if(man == null) return;
-			man.redirectSystemOutputToConnectedPC(true);
-		}
-		
-		new RoboComDriver(man);
+		new RoboComDriver();
 	}
 
-	public RoboComDriver(PCCommunicationManager man){
+	public RoboComDriver(){
 		Button.ESCAPE.addButtonListener(this);
 		Button.RIGHT.addButtonListener(this);
 		Button.LEFT.addButtonListener(this);
 		this.loadSettings();
-		this.man = man;
+		if(DEBUG_ENABLED){
+			PCConnector connector = new PCConnector(ConnectionType.BLUETOOTH, true, true, "speed", speed, "kp", kp, "ki", ki, "kd", kd, "delay", delay, "aussenmotorfaktor", aussenmotorfaktor);
+			man = connector.attemptConnection();
+			if(man == null) return;
+			man.redirectSystemOutputToConnectedPC(true);
+		}
 		LCD.clear();
 		motorL = new GoodMotor(MotorPort.C);
 		motorR = new GoodMotor(MotorPort.B);
 		
 		lightsensor = new SuperColorSensor();
+//		lightsensor = new LightSensor(SensorPort.S3);
 		lightsensor.setFloodlight(true);
 		ultrasonicSensor = new UltrasonicSensor(SensorPort.S2);
+		ultrasonicSensor.continuous();
 		
-		// setupRS485Connection();
+		 setupRS485Connection();
 		// LCD.drawString("Linienverfolgung", 0, 5);
 		lineFollower();
 		// LCD.drawString("DONE", 0, 6);
-		// closeRS485Connection();
+		 closeRS485Connection();
 	}
 
 	private void setupRS485Connection(){
@@ -146,8 +148,13 @@ public class RoboComDriver implements ButtonListener{
 	}
 
 	private boolean ballIsInRange(){
-//		return ultrasonicSensor.getDistance() <= STOP_DISTANCE;
-		return false;
+		array[2] = array[1];
+		array[1] = array[0];
+		array[0] = ultrasonicSensor.getDistance();
+		
+		int avg = (array[0] + array[1] + array[2]) / 3;
+		
+		return avg <= 25;
 	}
 	
 	public void calibrateLightSensor(int measurements){
@@ -158,14 +165,16 @@ public class RoboComDriver implements ButtonListener{
 			Delay.msDelay(500);
 			System.out.println("Bitte auf WEISS stellen!!");
 			while (!Button.ENTER.isDown());
-			weis.add(lightsensor.getRawLightValue());
+//			weis.add(lightsensor.getRawLightValue());
+			weis.add(SensorPort.S3.readRawValue());
 			System.out.println("Weiss: " + weis.get(i - 1));
 		}
 		for(int i = 1; i <= measurements; i++){
 			Delay.msDelay(500);
 			System.out.println("Bitte auf SCHWARZ stellen!!");
 			while(!Button.ENTER.isDown());
-			schwarz.add(lightsensor.getRawLightValue());
+//			schwarz.add(lightsensor.getRawLightValue());
+			schwarz.add(SensorPort.S3.readRawValue());
 			System.out.println("Schwarz: " + schwarz.get(i - 1));
 		}
 		int mitteweis = 0;
@@ -223,7 +232,6 @@ public class RoboComDriver implements ButtonListener{
 			lasterror = error;
 			
 			updateDatafields();
-			
 			if(++count % 5 == 0){
 				count = 0;
 				System.out.println("ReadValue: " + readValue + " Error: " + error + " Right: " + (motorR.getPower()) + " Left: " + (motorL.getPower()));
@@ -240,6 +248,12 @@ public class RoboComDriver implements ButtonListener{
 				Delay.msDelay(delay - (System.currentTimeMillis() - time));
 			}catch(Exception e) {}
 		}
+		Sound.playTone(2600, 2500);
+		motorL.setPower(30);
+		motorR.setPower(30);
+		Delay.msDelay(3000);
+		Motor.A.rotate(-120);
+		Delay.msDelay(100);
 		motorL.stop();
 		motorR.stop();
 		this.sendToNXT_ARM(1);
@@ -274,7 +288,9 @@ public class RoboComDriver implements ButtonListener{
 			for(NxtDataField df: DataSaver.getSingletone().loadSettings()){
 				interpretAndSetDatafield(df);
 			}
-		}catch(Exception e){}
+		}catch(Exception e){
+//			e.printStackTrace();
+		}
 	}
 	
 	private void saveCurrentSettings(){
@@ -287,7 +303,6 @@ public class RoboComDriver implements ButtonListener{
 	
 	private void interpretAndSetDatafield(NxtDataField df){
 		String name = df.getName();
-		
 		switch (name){
 		case "speed":
 			this.speed = (int) df.getValue();

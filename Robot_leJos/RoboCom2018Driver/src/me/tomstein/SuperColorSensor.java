@@ -1,11 +1,13 @@
 package me.tomstein;
 
 import lejos.nxt.ColorSensor;
+import lejos.nxt.LightSensor;
 import lejos.nxt.SensorPort;
 
-public class SuperColorSensor extends ColorSensor{
+public class SuperColorSensor extends LightSensor{
 	
 	private int zero, hundred;
+	private final SensorPort port = SensorPort.S3; 
 	
 	public SuperColorSensor(){
 		super(SensorPort.S3);
