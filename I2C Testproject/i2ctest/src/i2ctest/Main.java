@@ -15,7 +15,7 @@ public class Main {
         I2CSensor arduino = new I2CSensor(SensorPort.S1);
         arduino.setAddress(ARDUINO_ADDRESS);
 
-        byte[] buffer = new byte[8];
+        byte[] buffer = new byte[12];
         buffer[0] = 0;
         buffer[1] = 0;
         buffer[2] = 0;
@@ -24,12 +24,16 @@ public class Main {
         buffer[5] = 0;
         buffer[6] = 0;
         buffer[7] = 0;
+        buffer[8] = 0;
+        buffer[9] = 0;
+        buffer[10] = 0;
+        buffer[11] = 0;
 
         LCD.setAutoRefresh(false);
 
         while (!Button.ESCAPE.isPressed()) {
             LCD.clear();
-            int result = arduino.getData(0x42, buffer, 8);
+            int result = arduino.getData(0x42, buffer, buffer.length);
             
             //LCD.drawString((buffer[0])  + " " + firstval + " " + (firstvalNew), 0, 7);
             if (result == -5) {
@@ -52,8 +56,10 @@ public class Main {
                 LCD.drawString("Position:", 0, 4);
                 int posx = ((int)(buffer[0]) << 12) + ((int)(buffer[1]) << 8) + (buffer[2] << 4) + buffer[3];
                 int posy = ((int)(buffer[4]) << 12) + ((int)(buffer[5]) << 8) + (buffer[6] << 4) + buffer[7];
+                int radius = ((int)(buffer[8]) << 12) + ((int)(buffer[9]) << 8) + (buffer[10] << 4) + buffer[11];
                 LCD.drawString("X: " + posx, 7, 5);
                 LCD.drawString("Y: " + posy, 7, 6);
+                LCD.drawString("R: " + radius, 7, 7);
             }
 
             LCD.refresh();

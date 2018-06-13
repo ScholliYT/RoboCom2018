@@ -24,16 +24,19 @@ class bcolors:
     UNDERLINE = '\033[4m'
 current_milli_time = lambda: int(round(time.time() * 1000))
 
-def sendData(posx, posy):
+def sendData(posx, posy, radius):
     if(posx < 0 or posx > 65535):
         print(bcolors.WARNING + "PosX is not in bounds of [0|65535]!" + bcolors.ENDC)
         return
     elif(posy < 0 or posy > 65535):
-        print(bcolors.WARNING + "PosX is not in bounds of [0|65535]!" + bcolors.ENDC)
+        print(bcolors.WARNING + "PosY is not in bounds of [0|65535]!" + bcolors.ENDC)
         return
-    response = "<" + str(posx) + "," + str(posy) + ">"
+    elif(radius < 0 or radius > 65535):
+        print(bcolors.WARNING + "Raidus is not in bounds of [0|65535]!" + bcolors.ENDC)
+        return
+    response = "<" + str(posx) + "," + str(posy) + "," + str(radius) + ">"
     print(bcolors.OKGREEN + "Response: " + bcolors.ENDC + response)
-    ser.write(response)   
+    ser.write(response)
 
 def callback(value):
     pass
@@ -218,7 +221,7 @@ while True:
         print("Command: " + cmd)
         if(cmd == "Request\r\n"):
             print(bcolors.OKGREEN + "Got Request from arduino" + bcolors.ENDC)
-            sendData(posxAvg, posyAvg)
+            sendData(posxAvg, posyAvg, radiusAvg)
         else:
             print(bcolors.WARNING + "Something else arrived!" + bcolors.ENDC)
     # ================ I2C End ===================
