@@ -63,6 +63,7 @@ public class RoboComDriver implements ButtonListener{
 		Button.ESCAPE.addButtonListener(this);
 		Button.RIGHT.addButtonListener(this);
 		Button.LEFT.addButtonListener(this);
+		
 		this.loadSettings();
 		
 		if(DEBUG_ENABLED){
@@ -81,11 +82,11 @@ public class RoboComDriver implements ButtonListener{
 		ultrasonicSensor = new UltrasonicSensor(SensorPort.S2);
 		ultrasonicSensor.continuous();
 		
-		setupRS485Connection();
+//		setupRS485Connection();
 		// LCD.drawString("Linienverfolgung", 0, 5);
 		lineFollower();
 		// LCD.drawString("DONE", 0, 6);
-		closeRS485Connection();
+//		closeRS485Connection();
 	}
 
 	private void setupRS485Connection(){
@@ -301,6 +302,8 @@ public class RoboComDriver implements ButtonListener{
 			integral = 0;
 		}else if(b.getId() == Button.ID_LEFT){
 			saveCurrentSettings();
+			Sound.setVolume(100);
+			Sound.beepSequenceUp();
 		}
 	}
 	
@@ -313,7 +316,6 @@ public class RoboComDriver implements ButtonListener{
 				interpretAndSetDatafield(df);
 			}
 		}catch(Exception ignore){
-//			e.printStackTrace();
 		}
 	}
 	
