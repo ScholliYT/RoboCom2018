@@ -28,10 +28,15 @@ public class RoboComDriver implements ButtonListener{
 	private DataInputStream dis; // Stream for data coming from the NXT_ARM
 	private DataOutputStream dos; // Stream for data going out to the NXT_ARM
 	
+	private CameraConnection cameraConnection;
+	
 	private final int OK_RECIEVED = 200;
 //	private final int START_LIFTING = 10;
 	private final int STOP_DISTANCE = 25; // Distance to the tennis ball when stop lineFollowing
 	private final int MEASUREMENT_COUNT = 5; //Count of Distancemeasurements the program is using to compensate for mistakes
+	
+	private final int MIN_BALL_RADIUS = 200; // Minimal Radius for the tracked ball to be counted as "inRange"
+	
 	
 	// Start Constants for the lineFollowing
 	private int speed = 50;
@@ -82,6 +87,8 @@ public class RoboComDriver implements ButtonListener{
 		ultrasonicSensor = new UltrasonicSensor(SensorPort.S2);
 		ultrasonicSensor.continuous();
 		
+		
+		cameraConnection = new CameraConnection(SensorPort.S1);
 //		setupRS485Connection();
 		// LCD.drawString("Linienverfolgung", 0, 5);
 		lineFollower();
@@ -165,6 +172,9 @@ public class RoboComDriver implements ButtonListener{
 	}
 	
 	private boolean isBallInRange(){
+		cameraConnection.refresh();
+		boolean ballRadiusIsInRange = cameraConnection.getRadius() > MIN_BALL_RADIUS;
+		
 		arrayDurchschieben(ultrasonicSensor.getDistance());
 		int count = 0;
 		for(int x: ultrasonicMeasurements){
