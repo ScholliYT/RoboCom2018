@@ -29,13 +29,13 @@ public class Ultraschall{
 			array[0] = sensor.getDistance();
 			
 			int avg = (array[0] + array[1] + array[2]) / 3;
-			
-			if(avg <= 25){
-				System.out.println("ERKANNT!");
-				Delay.msDelay(3000);
-				Motor.A.rotate(-120);
-			}
-			Delay.msDelay(10);
+			System.out.println(avg);
+//			if(avg <= 25){
+//				System.out.println("ERKANNT!");
+//				Delay.msDelay(3000);
+////				Motor.A.rotate(-120);
+//			}
+			Delay.msDelay(250);
 		}
 	}
 	

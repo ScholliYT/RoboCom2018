@@ -32,6 +32,7 @@ public class RoboComDriver implements ButtonListener{
 //	private final int START_LIFTING = 10;
 	private final int STOP_DISTANCE = 25; // Distance to the tennis ball when stop lineFollowing
 	private final int MEASUREMENT_COUNT = 5; //Count of Distancemeasurements the program is using to compensate for mistakes
+	private final long DRIVE_DELAY_IN_MS = 7000;
 	
 	// Start Constants for the lineFollowing
 	private int speed = 50;
@@ -41,6 +42,7 @@ public class RoboComDriver implements ButtonListener{
 	private float kd = 0.5F;
 	private float aussenmotorfaktor = 1.00F;
 	private int integral = 0;
+	private long start;
 	// End Constants for the lineFollowing
 	private PCCommunicationManager man;
 	
@@ -82,11 +84,11 @@ public class RoboComDriver implements ButtonListener{
 		ultrasonicSensor = new UltrasonicSensor(SensorPort.S2);
 		ultrasonicSensor.continuous();
 		
-//		setupRS485Connection();
+		setupRS485Connection();
 		// LCD.drawString("Linienverfolgung", 0, 5);
 		lineFollower();
 		// LCD.drawString("DONE", 0, 6);
-//		closeRS485Connection();
+		closeRS485Connection();
 	}
 
 	private void setupRS485Connection(){
@@ -127,37 +129,46 @@ public class RoboComDriver implements ButtonListener{
 	 */
 	private boolean sendToNXT_ARM(int i){
 		if(connectionToNXT_ARM == null){
+			System.out.println("There is no available connection to the NXT_ARM");
 			throw new RuntimeException("There is no available connection to the NXT_ARM");
 		}
 		if(dos == null){
+			System.out.println("The DataOutputStream to the NXT_ARM is not available");
 			throw new RuntimeException("The DataOutputStream to the NXT_ARM is not available");
 		}
 		try{
-			LCD.drawString("write: ", 0, 6);
-			LCD.drawInt(i, 8, 6, 6);
+			//LCD.drawString("write: ", 0, 6);
+			//LCD.drawInt(i, 8, 6, 6);
+			System.out.println("writing to ARM: " + i);
 			dos.writeInt(i);
 			dos.flush();
+			System.out.println("writing to ARM completed.");
 		}catch(IOException ioe){
-			LCD.drawString("Write Exception", 0, 5);
+			//LCD.drawString("Write Exception", 0, 5);
+			System.out.println("Write Exception");
 			return false;
 		}
 		
 		try{
-			LCD.drawString("Read: ", 0, 7);
+			//LCD.drawString("Read: ", 0, 7);
 			int read = dis.readInt();
+			System.out.println("Read: " + read);
 			LCD.drawInt(read, 8, 6, 7);
 			if (read == OK_RECIEVED){
+				System.out.println("Recieved OK");
 				return true;
 			}else{
 				return false;
 			}
 		}catch(IOException ioe){
-			LCD.drawString("Read Exception ", 0, 5);
+			//LCD.drawString("Read Exception ", 0, 5);
+			System.out.println("Read Exception");
 			return false;
 		}
 	}
 	
 	private void arrayDurchschieben(int add){
+		System.out.println("new: " + add);
 		for(int j = (ultrasonicMeasurements.length-1); j > 0; j--){
 			ultrasonicMeasurements[j] = ultrasonicMeasurements[j-1];
 		}
@@ -165,11 +176,13 @@ public class RoboComDriver implements ButtonListener{
 	}
 	
 	private boolean isBallInRange(){
+		if((System.currentTimeMillis() - start) < DRIVE_DELAY_IN_MS) return false;
 		arrayDurchschieben(ultrasonicSensor.getDistance());
 		int count = 0;
 		for(int x: ultrasonicMeasurements){
 			count += x;
 		}
+		System.out.println("MeasuredAvg: " + count/MEASUREMENT_COUNT);
 		return (count / MEASUREMENT_COUNT) <= STOP_DISTANCE;
 	}
 	
@@ -221,6 +234,10 @@ public class RoboComDriver implements ButtonListener{
 	private void lineFollower(){
 		calibrateLightSensor(2);
 		
+		while(!Button.RIGHT.isDown());
+		
+		this.start = System.currentTimeMillis();
+		
 		motorR.forward();
 		motorL.forward();
 		int target = 50;
@@ -228,10 +245,10 @@ public class RoboComDriver implements ButtonListener{
 		
 		int derivative = 0;
 		int lasterror = 0;
-		long time;
 		int count = 0;
 		while(!isBallInRange()){ // Solange ausführen, bis der der Ball gefunden ist
-			time = System.currentTimeMillis();
+//			lineFollowerTick(target, derivative, lasterror, count);
+			long time = System.currentTimeMillis();
 			int readValue = lightsensor.getLightValue(); // Atuellen Wert des Lichtsensors einlesen
 			//System.out.println("Measuered: " + readValue);
 			
@@ -273,17 +290,111 @@ public class RoboComDriver implements ButtonListener{
 				Delay.msDelay(delay - (System.currentTimeMillis() - time));
 			}catch(Exception e) {}
 		}
-		Sound.playTone(2600, 2500);
-		motorL.setPower(30);
-		motorR.setPower(30);
-		Delay.msDelay(3000);
+		
+		long afterBall = System.currentTimeMillis();
+		
+		while((System.currentTimeMillis() - afterBall) < 1500){
+//			lineFollowerTick(target, derivative, lasterror, count);
+			long time = System.currentTimeMillis();
+			int readValue = lightsensor.getLightValue(); // Atuellen Wert des Lichtsensors einlesen
+			//System.out.println("Measuered: " + readValue);
+			
+			int error = target - readValue; // Differenz zur Kante berrechnen
+			
+			if(error <= 1 && error >= -1){ // Auf der Kante
+				integral = 0; // Integral zurücksetzen
+			}
+			
+			integral += error;
+			derivative = error - lasterror;
+			// System.out.println("Error: " + error);
+			// System.out.println("Integral: " + integral);
+			// System.out.println("Derivative: " + derivative);
+			
+			int turn = (int) (kp * error + ki * integral + kd * derivative);
+			// System.out.println(turn);
+			motorR.setPower((int) (speed - (turn * aussenmotorfaktor)));
+			motorL.setPower(speed + turn);
+			
+			
+			// System.out.println((speed-turn) + ":" + (speed+turn));
+			lasterror = error;
+			
+			updateDatafields();
+			if(++count % 5 == 0){
+				count = 0;
+				System.out.println("ReadValue: " + readValue + " Error: " + error + " Right: " + (motorR.getPower()) + " Left: " + (motorL.getPower()));
+				/*
+				System.out.println("Measuered: " + readValue);
+				System.out.println("Error: " + error + "; integral: " + integral + "; derivative: " + derivative
+						+ "; lasterror: " + lasterror);
+				System.out.println("Right: " + (speed - turn));
+				System.out.println("Left: " + (speed + turn));
+				System.out.println("Durchlauf: " + (System.currentTimeMillis() - time) + "ms.");
+				*/
+			}
+			try {
+				Delay.msDelay(delay - (System.currentTimeMillis() - time));
+			}catch(Exception e) {}
+		}
+//		Sound.playTone(2600, 2500);
+		System.out.println("Ball detected");
+		motorL.setPower(50);
+		motorR.setPower(50);
+		Delay.msDelay(1000);
 		Motor.A.rotate(-120);
 		Delay.msDelay(100);
 		motorL.stop();
 		motorR.stop();
+		System.out.println("Sending trigger to ARM");
 		this.sendToNXT_ARM(1);
+		System.out.println("Trigger was send");
 	}
-
+	
+	private void lineFollowerTick(int target, int derivative, int lasterror, int count){
+		long time = System.currentTimeMillis();
+		int readValue = lightsensor.getLightValue(); // Atuellen Wert des Lichtsensors einlesen
+		//System.out.println("Measuered: " + readValue);
+		
+		int error = target - readValue; // Differenz zur Kante berrechnen
+		
+		if(error <= 1 && error >= -1){ // Auf der Kante
+			integral = 0; // Integral zurücksetzen
+		}
+		
+		integral += error;
+		derivative = error - lasterror;
+		// System.out.println("Error: " + error);
+		// System.out.println("Integral: " + integral);
+		// System.out.println("Derivative: " + derivative);
+		
+		int turn = (int) (kp * error + ki * integral + kd * derivative);
+		// System.out.println(turn);
+		motorR.setPower((int) (speed - (turn * aussenmotorfaktor)));
+		motorL.setPower(speed + turn);
+		
+		
+		// System.out.println((speed-turn) + ":" + (speed+turn));
+		lasterror = error;
+		
+		updateDatafields();
+		if(++count % 5 == 0){
+			count = 0;
+			System.out.println("ReadValue: " + readValue + " Error: " + error + " Right: " + (motorR.getPower()) + " Left: " + (motorL.getPower()));
+			/*
+			System.out.println("Measuered: " + readValue);
+			System.out.println("Error: " + error + "; integral: " + integral + "; derivative: " + derivative
+					+ "; lasterror: " + lasterror);
+			System.out.println("Right: " + (speed - turn));
+			System.out.println("Left: " + (speed + turn));
+			System.out.println("Durchlauf: " + (System.currentTimeMillis() - time) + "ms.");
+			*/
+		}
+		try {
+			Delay.msDelay(delay - (System.currentTimeMillis() - time));
+		}catch(Exception e) {}
+	}
+	
 	private void updateDatafields(){
 		if(DEBUG_ENABLED && man != null && man.isAvailable() && man.hasDatafieldUpdate()){
 			NxtDataField[] df = man.getDatafields();

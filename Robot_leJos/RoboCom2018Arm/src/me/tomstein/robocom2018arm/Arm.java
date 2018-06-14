@@ -4,20 +4,16 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 
 import lejos.nxt.Motor;
-import lejos.nxt.MotorPort;
 import lejos.nxt.NXTRegulatedMotor;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
+import lejos.nxt.Sound;
+
 import java.io.IOException;
 
+import lejos.nxt.Button;
 import lejos.nxt.LCD;
-import lejos.nxt.comm.Bluetooth;
-import lejos.nxt.comm.NXTCommConnector;
 import lejos.nxt.comm.NXTConnection;
 import lejos.nxt.comm.RS485;
-import lejos.nxt.comm.USB;
-import lejos.util.TextMenu;
+import lejos.util.Delay;
 
 public class Arm {
 	private NXTRegulatedMotor motor;
@@ -34,8 +30,10 @@ public class Arm {
 	
 	private void connect() {
 		LCD.drawString("Waiting: ", 0, 1);
+		Sound.playTone(2000, 500);
 		NXTConnection con = RS485.getConnector().waitForConnection(0, NXTConnection.PACKET);
 		LCD.drawString("Connected...", 0, 2);
+		Sound.playTone(1000, 200);
 		dis = con.openDataInputStream();
 		dos = con.openDataOutputStream();
 
@@ -44,18 +42,21 @@ public class Arm {
 			
 			try {
 				n = dis.readInt();
+				LCD.drawString("Read: " + n, 0, 4);
+				if(n==1) {
+					motor.rotate((6 * 360) + 120);
+					try {
+						dos.writeInt(200);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					while(!Button.ENTER.isDown());
+					break;
+				}
 			} catch (IOException e) {
 				break;
 			}
 		}
-		LCD.drawString("Read: " + n, 0, 4);
-		if(n==1) {
-			motor.rotate(9 * 360);
-			try {
-				dos.writeInt(200);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		
 	}
 }
